@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  wakarimi-music-playback:
+    container_name: wakarimi-music-playback
+    build:
+      context: .
+    image: wakarimi-music-playback
