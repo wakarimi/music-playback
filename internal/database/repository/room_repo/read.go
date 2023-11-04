@@ -23,7 +23,6 @@ func (r Repository) Read(tx *sqlx.Tx, roomId int) (room model.Room, err error) {
 		log.Error().Int("roomId", roomId).Msg("Failed to prepare query")
 		return model.Room{}, err
 	}
-
 	err = stmt.Get(&room, args)
 	if err != nil {
 		log.Error().Err(err).Int("roomId", roomId).Msg("Failed to read room")

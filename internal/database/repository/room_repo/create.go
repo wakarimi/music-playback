@@ -11,8 +11,8 @@ func (r Repository) Create(tx *sqlx.Tx, room model.Room) (roomId int, err error)
 	log.Debug().Msg("Creating room")
 
 	query := `
-		INSERT INTO rooms(owner_id, current_queue_item_id, name, connection_string, playback_order_type)
-		VALUES (:owner_id, :current_queue_item_id, :name, :connection_string, :playback_order_type)
+		INSERT INTO rooms(owner_id, current_queue_item_id, name, share_code, playback_order_type)
+		VALUES (:owner_id, :current_queue_item_id, :name, :share_code, :playback_order_type)
 		RETURNING id
 	`
 	rows, err := tx.NamedQuery(query, room)

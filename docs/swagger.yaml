@@ -19,6 +19,14 @@ definitions:
         description: Internal error description
         type: string
     type: object
+  room_handler.createRequest:
+    properties:
+      name:
+        description: Desired room name
+        type: string
+    required:
+    - name
+    type: object
   room_handler.createResponse:
     properties:
       id:
@@ -34,6 +42,12 @@ definitions:
         allOf:
         - $ref: '#/definitions/model.PlaybackOrderType'
         description: Playback order in the created room
+    type: object
+  room_handler.generateShareCodeResponse:
+    properties:
+      shareCode:
+        description: Code to connect to the room
+        type: string
     type: object
 host: localhost:8024
 info:
@@ -61,6 +75,12 @@ paths:
         name: X-Account-Id
         required: true
         type: integer
+      - description: Room data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/room_handler.createRequest'
       produces:
       - application/json
       responses:
@@ -72,11 +92,101 @@ paths:
           description: Invalid input data
           schema:
             $ref: '#/definitions/response.Error'
+        "403":
+          description: Invalid X-Account-Id header format
+          schema:
+            $ref: '#/definitions/response.Error'
         "500":
           description: Internal server error
           schema:
             $ref: '#/definitions/response.Error'
       summary: Creates a room
+      tags:
+      - Rooms
+  /rooms/{roomId}/share:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: en-US
+        description: Language preference
+        in: header
+        name: Produce-Language
+        type: string
+      - description: Account ID
+        in: header
+        name: X-Account-Id
+        required: true
+        type: integer
+      - description: Room ID
+        in: path
+        name: roomId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/room_handler.generateShareCodeResponse'
+        "403":
+          description: Trying to generate a code for someone else's room; Invalid
+            X-Account-Id header format
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: The room does not exist
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Receives a code to connect to the room
+      tags:
+      - Rooms
+  /rooms/{roomId}/share-gen:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - default: en-US
+        description: Language preference
+        in: header
+        name: Produce-Language
+        type: string
+      - description: Account ID
+        in: header
+        name: X-Account-Id
+        required: true
+        type: integer
+      - description: Room ID
+        in: path
+        name: roomId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/room_handler.generateShareCodeResponse'
+        "403":
+          description: Trying to generate a code for someone else's room; Invalid
+            X-Account-Id header format
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: The room does not exist
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Creates or recreates a code to connect to a room
       tags:
       - Rooms
 swagger: "2.0"

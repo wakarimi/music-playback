@@ -1,6 +1,9 @@
 {
-  "InvalidFieldFormat": {
-    "other": "Invalid {{.Field}} format"
+  "InvalidHeaderFormat": {
+    "other": "Invalid header format"
+  },
+  "InvalidUrlParameterFormat": {
+    "other": "Invalid request parameter format"
   },
   "InternalServerError": {
     "other": "Internal server error"
@@ -9,9 +12,15 @@
     "other": "Failed to encode request"
   },
   "FailedToCreateRoom": {
-    "other": "Failed to create room \"{{.RoomName}}\""
+    "other": "Failed to create room {{.RoomName}}"
   },
   "ValidationFailedForRequest": {
     "other": "Validation failed for request"
+  },
+  "NotEnoughRightsToTheRoom": {
+    "other": "Not enough rights to the room"
+  },
+  "RoomNotFound": {
+    "other": "Room not found"
   }
 }

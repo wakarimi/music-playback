@@ -48,6 +48,15 @@ const docTemplate = `{
                         "name": "X-Account-Id",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "description": "Room data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.createRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -59,6 +68,138 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Invalid X-Account-Id header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/rooms/{roomId}/share": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Receives a code to connect to the room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-Id",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "roomId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.generateShareCodeResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-Id header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "The room does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/rooms/{roomId}/share-gen": {
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Creates or recreates a code to connect to a room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-Id",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "roomId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.generateShareCodeResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-Id header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "The room does not exist",
                         "schema": {
                             "$ref": "#/definitions/response.Error"
                         }
@@ -100,6 +241,18 @@ const docTemplate = `{
                 }
             }
         },
+        "room_handler.createRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "description": "Desired room name",
+                    "type": "string"
+                }
+            }
+        },
         "room_handler.createResponse": {
             "type": "object",
             "properties": {
@@ -122,6 +275,15 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.PlaybackOrderType"
                         }
                     ]
+                }
+            }
+        },
+        "room_handler.generateShareCodeResponse": {
+            "type": "object",
+            "properties": {
+                "shareCode": {
+                    "description": "Code to connect to the room",
+                    "type": "string"
                 }
             }
         }

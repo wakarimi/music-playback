@@ -20,7 +20,7 @@ CREATE TABLE "rooms"
     "owner_id"              INTEGER             NOT NULL,
     "current_queue_item_id" INTEGER UNIQUE,
     "name"                  TEXT                NOT NULL,
-    "connection_string"     TEXT UNIQUE,
+    "share_code"            TEXT UNIQUE,
     "playback_order_type"   PLAYBACK_ORDER_TYPE NOT NULL,
     FOREIGN KEY ("current_queue_item_id") REFERENCES "queue_items" ("id")
 );

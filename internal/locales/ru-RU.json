@@ -1,6 +1,9 @@
 {
-  "InvalidFieldFormat": {
-    "other": "Неверный формат {{.Field}}"
+  "InvalidHeaderFormat": {
+    "other": "Неверный формат заголовка"
+  },
+  "InvalidUrlParameterFormat": {
+    "other": "Неверный формат параметра запроса"
   },
   "InternalServerError": {
     "other": "Втунренняя ошибка сервера"
@@ -9,9 +12,15 @@
     "other": "Не удалось распознать запрос"
   },
   "FailedToCreateRoom": {
-    "other": "Не удалось создать комнату \"{{.RoomName}}\""
+    "other": "Не удалось создать комнату {{.RoomName}}"
   },
   "ValidationFailedForRequest": {
     "other": "Неверные параметры запроса"
+  },
+  "NotEnoughRightsToTheRoom": {
+    "other": "Недостаточно прав к комнате"
+  },
+  "RoomNotFound": {
+    "other": "Комната не найдена"
   }
 }

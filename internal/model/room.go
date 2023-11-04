@@ -5,6 +5,6 @@ type Room struct {
 	OwnerId            int               `db:"owner_id"`
 	CurrentQueueItemId *int              `db:"current_queue_item_id"`
 	Name               string            `db:"name"`
-	ConnectionString   *string           `db:"connection_string"`
+	ShareCode          *string           `db:"share_code"`
 	PlaybackOrderType  PlaybackOrderType `db:"playback_order_type"`
 }

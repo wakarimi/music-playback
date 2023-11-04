@@ -44,6 +44,8 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 		rooms := api.Group("/rooms")
 		{
 			rooms.POST("", roomHandler.Create)
+			rooms.PATCH("/:roomId/share-gen", roomHandler.GenerateShareCode)
+			rooms.GET("/:roomId/share", roomHandler.GetShareCode)
 		}
 	}
 

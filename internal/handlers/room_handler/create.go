@@ -35,10 +35,12 @@ type createResponse struct {
 // @Tags Rooms
 // @Accept json
 // @Produce json
-// @Param Produce-Language header string false "Language preference" default(en-US)
-// @Param X-Account-Id header int true "Account ID"
+// @Param Produce-Language 	header 	string 			false 	"Language preference" default(en-US)
+// @Param X-Account-Id 		header 	int 			true 	"Account ID"
+// @Param request			body	createRequest	true	"Room data"
 // @Success 201 {object} createResponse
 // @Failure 400 {object} response.Error "Invalid input data"
+// @Failure 403 {object} response.Error "Invalid X-Account-Id header format"
 // @Failure 500 {object} response.Error "Internal server error"
 // @Router /rooms [post]
 func (h *Handler) Create(c *gin.Context) {
@@ -53,8 +55,7 @@ func (h *Handler) Create(c *gin.Context) {
 		log.Error().Err(err).Str("accountIDHeader", accountIDHeader).Msg("Invalid X-Account-Id format")
 		c.JSON(http.StatusBadRequest, response.Error{
 			Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:    "InvalidFieldFormat",
-				TemplateData: map[string]interface{}{"Field": "X-Account-Id"}}),
+				MessageID: "InvalidHeaderFormat"}),
 			Reason: err.Error(),
 		})
 		return
@@ -98,14 +99,13 @@ func (h *Handler) Create(c *gin.Context) {
 		log.Error().Err(err).Msg("Failed to create room")
 		c.JSON(http.StatusInternalServerError, response.Error{
 			Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:    "FailedToCreateRoom",
-				TemplateData: map[string]interface{}{"RoomName": request.Name}}),
+				MessageID: "FailedToCreateRoom"}),
 			Reason: err.Error(),
 		})
 		return
 	}
 
-	log.Debug().Msg("Room created successfully")
+	log.Debug().Msg("Room created")
 	c.JSON(http.StatusCreated, createResponse{
 		ID:                room.Id,
 		OwnerID:           room.OwnerId,
