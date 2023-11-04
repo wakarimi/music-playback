@@ -1,0 +1,17 @@
+{
+  "InvalidFieldFormat": {
+    "other": "Invalid {{.Field}} format"
+  },
+  "InternalServerError": {
+    "other": "Internal server error"
+  },
+  "FailedToEncodeRequest": {
+    "other": "Failed to encode request"
+  },
+  "FailedToCreateRoom": {
+    "other": "Failed to create room \"{{.RoomName}}\""
+  },
+  "ValidationFailedForRequest": {
+    "other": "Validation failed for request"
+  }
+}

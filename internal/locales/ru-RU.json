@@ -1,0 +1,17 @@
+{
+  "InvalidFieldFormat": {
+    "other": "Неверный формат {{.Field}}"
+  },
+  "InternalServerError": {
+    "other": "Втунренняя ошибка сервера"
+  },
+  "FailedToEncodeRequest": {
+    "other": "Не удалось распознать запрос"
+  },
+  "FailedToCreateRoom": {
+    "other": "Не удалось создать комнату \"{{.RoomName}}\""
+  },
+  "ValidationFailedForRequest": {
+    "other": "Неверные параметры запроса"
+  }
+}

@@ -10,8 +10,21 @@ import (
 	"music-playback/internal/context"
 	"music-playback/internal/database"
 	"os"
+
+	_ "music-playback/docs"
 )
 
+// @title Wakarimi Music Playback API
+// @version 0.4.2
+
+// @contact.name Dmitry Kolesnikov (Zalimannard)
+// @contact.email zalimannard@mail.ru
+
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+
+// @host localhost:8024
+// @BasePath /api
 func main() {
 	cfg := loadConfiguration()
 

@@ -1,0 +1,122 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Wakarimi Music Playback API",
+        "contact": {
+            "name": "Dmitry Kolesnikov (Zalimannard)",
+            "email": "zalimannard@mail.ru"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "0.4.2"
+    },
+    "host": "localhost:8024",
+    "basePath": "/api",
+    "paths": {
+        "/rooms": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Creates a room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-Id",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.createResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input data",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.PlaybackOrderType": {
+            "type": "string",
+            "enum": [
+                "IN_ORDER",
+                "REPLAY",
+                "RANDOM"
+            ],
+            "x-enum-varnames": [
+                "InOrder",
+                "Replay",
+                "Random"
+            ]
+        },
+        "response.Error": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "Human-readable error message",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "Internal error description",
+                    "type": "string"
+                }
+            }
+        },
+        "room_handler.createResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID of the created room",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the created room",
+                    "type": "string"
+                },
+                "ownerId": {
+                    "description": "Room owner",
+                    "type": "integer"
+                },
+                "playbackOrderType": {
+                    "description": "Playback order in the created room",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.PlaybackOrderType"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

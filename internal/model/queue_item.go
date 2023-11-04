@@ -1,4 +1,4 @@
-package models
+package model
 
 type QueueItem struct {
 	Id         int  `db:"id"`

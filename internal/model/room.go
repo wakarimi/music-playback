@@ -1,12 +1,4 @@
-package models
-
-type PlaybackOrderType string
-
-const (
-	InOrder PlaybackOrderType = "IN_ORDER"
-	Replay  PlaybackOrderType = "REPLAY"
-	Random  PlaybackOrderType = "RANDOM"
-)
+package model
 
 type Room struct {
 	Id                 int               `db:"id"`

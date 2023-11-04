@@ -1,0 +1,82 @@
+basePath: /api
+definitions:
+  model.PlaybackOrderType:
+    enum:
+    - IN_ORDER
+    - REPLAY
+    - RANDOM
+    type: string
+    x-enum-varnames:
+    - InOrder
+    - Replay
+    - Random
+  response.Error:
+    properties:
+      message:
+        description: Human-readable error message
+        type: string
+      reason:
+        description: Internal error description
+        type: string
+    type: object
+  room_handler.createResponse:
+    properties:
+      id:
+        description: ID of the created room
+        type: integer
+      name:
+        description: Name of the created room
+        type: string
+      ownerId:
+        description: Room owner
+        type: integer
+      playbackOrderType:
+        allOf:
+        - $ref: '#/definitions/model.PlaybackOrderType'
+        description: Playback order in the created room
+    type: object
+host: localhost:8024
+info:
+  contact:
+    email: zalimannard@mail.ru
+    name: Dmitry Kolesnikov (Zalimannard)
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Wakarimi Music Playback API
+  version: 0.4.2
+paths:
+  /rooms:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - default: en-US
+        description: Language preference
+        in: header
+        name: Produce-Language
+        type: string
+      - description: Account ID
+        in: header
+        name: X-Account-Id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/room_handler.createResponse'
+        "400":
+          description: Invalid input data
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Creates a room
+      tags:
+      - Rooms
+swagger: "2.0"

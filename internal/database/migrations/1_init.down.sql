@@ -1,6 +1,5 @@
 DROP TABLE IF EXISTS "sessions";
 DROP TABLE IF EXISTS "roommates";
-DROP TABLE IF EXISTS "devices";
 DROP TABLE IF EXISTS "rooms";
 DROP TABLE IF EXISTS "queue_items";
 

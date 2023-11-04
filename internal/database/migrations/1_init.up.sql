@@ -25,17 +25,10 @@ CREATE TABLE "rooms"
     FOREIGN KEY ("current_queue_item_id") REFERENCES "queue_items" ("id")
 );
 
-CREATE TABLE "devices"
-(
-    "id"      SERIAL PRIMARY KEY,
-    "user_id" INTEGER NOT NULL,
-    "name"    TEXT    NOT NULL
-);
-
 CREATE TABLE "roommates"
 (
     "id"      SERIAL PRIMARY KEY,
-    "user_id" INTEGER NOT NULL,
+    "account_id" INTEGER NOT NULL,
     "room_id" INTEGER NOT NULL,
     FOREIGN KEY ("room_id") REFERENCES "rooms" ("id")
 );
@@ -45,6 +38,5 @@ CREATE TABLE "sessions"
     "id"        SERIAL PRIMARY KEY,
     "device_id" INTEGER UNIQUE NOT NULL,
     "room_id"   INTEGER        NOT NULL,
-    FOREIGN KEY ("device_id") REFERENCES "devices" ("id"),
     FOREIGN KEY ("room_id") REFERENCES "rooms" ("id")
 );

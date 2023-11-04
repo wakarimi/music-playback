@@ -1,4 +1,4 @@
-package models
+package model
 
 type Session struct {
 	Id       int `db:"id"`
