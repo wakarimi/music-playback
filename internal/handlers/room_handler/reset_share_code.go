@@ -11,27 +11,21 @@ import (
 	"strconv"
 )
 
-// generateShareCodeResponse is the data format returned when generating the share code
-type generateShareCodeResponse struct {
-	// Code to connect to the room
-	ShareCode *string `json:"shareCode"`
-}
-
-// GenerateShareCode creates or recreates a code to connect to a room
-// @Summary Creates or recreates a code to connect to a room
+// ResetShareCode reset a code to connect to a room
+// @Summary Reset a code to connect to a room
 // @Tags Rooms
 // @Accept 	json
 // @Produce json
 // @Param Produce-Language 	header 	string 	false 	"Language preference" default(en-US)
 // @Param X-Account-Id 		header 	int 	true 	"Account ID"
 // @Param roomId 			path 	int 	true 	"Room ID"
-// @Success 200 {object} generateShareCodeResponse
+// @Success 200
 // @Failure 403 {object} response.Error "Trying to generate a code for someone else's room; Invalid X-Account-Id header format"
 // @Failure 404 {object} response.Error "The room does not exist"
 // @Failure 500 {object} response.Error "Internal server error"
-// @Router /rooms/{roomId}/share [patch]
-func (h *Handler) GenerateShareCode(c *gin.Context) {
-	log.Debug().Msg("Generating share code")
+// @Router /rooms/{roomId}/share-reset [patch]
+func (h *Handler) ResetShareCode(c *gin.Context) {
+	log.Debug().Msg("Resetting share code")
 
 	lang := c.MustGet("lang").(string)
 	localizer := i18n.NewLocalizer(h.Bundle, lang)
@@ -62,20 +56,15 @@ func (h *Handler) GenerateShareCode(c *gin.Context) {
 	}
 	log.Debug().Int("roomId", roomId).Msg("Url parameter read successfully")
 
-	var shareCode *string
 	err = h.TransactionManager.WithTransaction(func(tx *sqlx.Tx) (err error) {
-		err = h.RoomService.GenerateShareCode(tx, roomId, accountID)
-		if err != nil {
-			return err
-		}
-		shareCode, err = h.RoomService.GetShareCode(tx, roomId, accountID)
+		err = h.RoomService.ResetShareCode(tx, roomId, accountID)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
 	if err != nil {
-		log.Error().Err(err).Int("roomId", roomId).Msg("Failed to generate share code")
+		log.Error().Err(err).Int("roomId", roomId).Msg("Failed to reset share code")
 		if _, ok := err.(errors.Forbidden); ok {
 			c.JSON(http.StatusForbidden, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -100,8 +89,6 @@ func (h *Handler) GenerateShareCode(c *gin.Context) {
 		}
 	}
 
-	log.Debug().Msg("Share code generated")
-	c.JSON(http.StatusOK, generateShareCodeResponse{
-		ShareCode: shareCode,
-	})
+	log.Debug().Msg("Share code reset")
+	c.Status(http.StatusOK)
 }

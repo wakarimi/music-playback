@@ -146,7 +146,6 @@ paths:
       summary: Receives a code to connect to the room
       tags:
       - Rooms
-  /rooms/{roomId}/share-gen:
     patch:
       consumes:
       - application/json
@@ -187,6 +186,47 @@ paths:
           schema:
             $ref: '#/definitions/response.Error'
       summary: Creates or recreates a code to connect to a room
+      tags:
+      - Rooms
+  /rooms/{roomId}/share-reset:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - default: en-US
+        description: Language preference
+        in: header
+        name: Produce-Language
+        type: string
+      - description: Account ID
+        in: header
+        name: X-Account-Id
+        required: true
+        type: integer
+      - description: Room ID
+        in: path
+        name: roomId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: Trying to generate a code for someone else's room; Invalid
+            X-Account-Id header format
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: The room does not exist
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Reset a code to connect to a room
       tags:
       - Rooms
 swagger: "2.0"
