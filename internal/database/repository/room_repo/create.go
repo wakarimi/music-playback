@@ -7,7 +7,7 @@ import (
 	"music-playback/internal/model"
 )
 
-func (r Repository) Create(tx *sqlx.Tx, room model.Room) (roomId int, err error) {
+func (r Repository) Create(tx *sqlx.Tx, room model.Room) (roomID int, err error) {
 	log.Debug().Msg("Creating room")
 
 	query := `
@@ -28,7 +28,7 @@ func (r Repository) Create(tx *sqlx.Tx, room model.Room) (roomId int, err error)
 	}(rows)
 
 	if rows.Next() {
-		if err := rows.Scan(&roomId); err != nil {
+		if err := rows.Scan(&roomID); err != nil {
 			log.Error().Err(err).Msg("Failed to scan id into filed")
 			return 0, err
 		}
@@ -38,6 +38,6 @@ func (r Repository) Create(tx *sqlx.Tx, room model.Room) (roomId int, err error)
 		return 0, err
 	}
 
-	log.Debug().Int("roomId", roomId).Msg("Room created")
-	return roomId, nil
+	log.Debug().Int("roomID", roomID).Msg("Room created")
+	return roomID, nil
 }

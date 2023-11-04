@@ -6,12 +6,12 @@ import (
 )
 
 type Repo interface {
-	Create(tx *sqlx.Tx, room model.Room) (roomId int, err error)
-	Read(tx *sqlx.Tx, roomId int) (room model.Room, err error)
-	UpdateShareCode(tx *sqlx.Tx, roomId int, shareCode string) (err error)
-	IsExists(tx *sqlx.Tx, roomId int) (exists bool, err error)
+	Create(tx *sqlx.Tx, room model.Room) (roomID int, err error)
+	Read(tx *sqlx.Tx, roomID int) (room model.Room, err error)
+	UpdateShareCode(tx *sqlx.Tx, roomID int, shareCode string) (err error)
+	IsExists(tx *sqlx.Tx, roomID int) (exists bool, err error)
 	IsShareCodeUsed(tx *sqlx.Tx, shareCode string) (used bool, err error)
-	ResetShareCode(tx *sqlx.Tx, roomId int) (err error)
+	ResetShareCode(tx *sqlx.Tx, roomID int) (err error)
 }
 
 type Repository struct {

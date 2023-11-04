@@ -5,8 +5,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (r Repository) IsExists(tx *sqlx.Tx, roomId int) (exists bool, err error) {
-	log.Debug().Int("roomId", roomId).Msg("Checking room existence")
+func (r Repository) IsExists(tx *sqlx.Tx, roomID int) (exists bool, err error) {
+	log.Debug().Int("roomID", roomID).Msg("Checking room existence")
 
 	query := `
 		SELECT EXISTS (
@@ -16,20 +16,20 @@ func (r Repository) IsExists(tx *sqlx.Tx, roomId int) (exists bool, err error) {
 		)
 	`
 	args := map[string]interface{}{
-		"id": roomId,
+		"id": roomID,
 	}
 
 	stmt, err := tx.PrepareNamed(query)
 	if err != nil {
-		log.Error().Int("roomId", roomId).Msg("Failed to prepare query")
+		log.Error().Int("roomID", roomID).Msg("Failed to prepare query")
 		return false, err
 	}
 	err = stmt.Get(&exists, args)
 	if err != nil {
-		log.Error().Err(err).Int("roomId", roomId).Msg("Failed to check room existence")
+		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to check room existence")
 		return false, err
 	}
 
-	log.Debug().Int("roomId", roomId).Bool("exists", exists).Msg("Room existence checked")
+	log.Debug().Int("roomID", roomID).Bool("exists", exists).Msg("Room existence checked")
 	return exists, nil
 }

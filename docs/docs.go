@@ -45,7 +45,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Account ID",
-                        "name": "X-Account-Id",
+                        "name": "X-Account-ID",
                         "in": "header",
                         "required": true
                     },
@@ -73,7 +73,7 @@ const docTemplate = `{
                         }
                     },
                     "403": {
-                        "description": "Invalid X-Account-Id header format",
+                        "description": "Invalid X-Account-ID header format",
                         "schema": {
                             "$ref": "#/definitions/response.Error"
                         }
@@ -87,7 +87,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/rooms/{roomId}/share": {
+        "/rooms/{roomID}/share": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -110,14 +110,14 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Account ID",
-                        "name": "X-Account-Id",
+                        "name": "X-Account-ID",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "Room ID",
-                        "name": "roomId",
+                        "name": "roomID",
                         "in": "path",
                         "required": true
                     }
@@ -130,7 +130,7 @@ const docTemplate = `{
                         }
                     },
                     "403": {
-                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-Id header format",
+                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-ID header format",
                         "schema": {
                             "$ref": "#/definitions/response.Error"
                         }
@@ -171,14 +171,14 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Account ID",
-                        "name": "X-Account-Id",
+                        "name": "X-Account-ID",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "Room ID",
-                        "name": "roomId",
+                        "name": "roomID",
                         "in": "path",
                         "required": true
                     }
@@ -191,7 +191,7 @@ const docTemplate = `{
                         }
                     },
                     "403": {
-                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-Id header format",
+                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-ID header format",
                         "schema": {
                             "$ref": "#/definitions/response.Error"
                         }
@@ -211,7 +211,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/rooms/{roomId}/share-reset": {
+        "/rooms/{roomID}/share-reset": {
             "patch": {
                 "consumes": [
                     "application/json"
@@ -234,14 +234,14 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Account ID",
-                        "name": "X-Account-Id",
+                        "name": "X-Account-ID",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "Room ID",
-                        "name": "roomId",
+                        "name": "roomID",
                         "in": "path",
                         "required": true
                     }
@@ -251,7 +251,7 @@ const docTemplate = `{
                         "description": "OK"
                     },
                     "403": {
-                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-Id header format",
+                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-ID header format",
                         "schema": {
                             "$ref": "#/definitions/response.Error"
                         }
@@ -322,7 +322,7 @@ const docTemplate = `{
                     "description": "Name of the created room",
                     "type": "string"
                 },
-                "ownerId": {
+                "ownerID": {
                     "description": "Room owner",
                     "type": "integer"
                 },

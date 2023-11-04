@@ -35,7 +35,7 @@ definitions:
       name:
         description: Name of the created room
         type: string
-      ownerId:
+      ownerID:
         description: Room owner
         type: integer
       playbackOrderType:
@@ -72,7 +72,7 @@ paths:
         type: string
       - description: Account ID
         in: header
-        name: X-Account-Id
+        name: X-Account-ID
         required: true
         type: integer
       - description: Room data
@@ -93,7 +93,7 @@ paths:
           schema:
             $ref: '#/definitions/response.Error'
         "403":
-          description: Invalid X-Account-Id header format
+          description: Invalid X-Account-ID header format
           schema:
             $ref: '#/definitions/response.Error'
         "500":
@@ -103,7 +103,7 @@ paths:
       summary: Creates a room
       tags:
       - Rooms
-  /rooms/{roomId}/share:
+  /rooms/{roomID}/share:
     get:
       consumes:
       - application/json
@@ -115,12 +115,12 @@ paths:
         type: string
       - description: Account ID
         in: header
-        name: X-Account-Id
+        name: X-Account-ID
         required: true
         type: integer
       - description: Room ID
         in: path
-        name: roomId
+        name: roomID
         required: true
         type: integer
       produces:
@@ -132,7 +132,7 @@ paths:
             $ref: '#/definitions/room_handler.generateShareCodeResponse'
         "403":
           description: Trying to generate a code for someone else's room; Invalid
-            X-Account-Id header format
+            X-Account-ID header format
           schema:
             $ref: '#/definitions/response.Error'
         "404":
@@ -157,12 +157,12 @@ paths:
         type: string
       - description: Account ID
         in: header
-        name: X-Account-Id
+        name: X-Account-ID
         required: true
         type: integer
       - description: Room ID
         in: path
-        name: roomId
+        name: roomID
         required: true
         type: integer
       produces:
@@ -174,7 +174,7 @@ paths:
             $ref: '#/definitions/room_handler.generateShareCodeResponse'
         "403":
           description: Trying to generate a code for someone else's room; Invalid
-            X-Account-Id header format
+            X-Account-ID header format
           schema:
             $ref: '#/definitions/response.Error'
         "404":
@@ -188,7 +188,7 @@ paths:
       summary: Creates or recreates a code to connect to a room
       tags:
       - Rooms
-  /rooms/{roomId}/share-reset:
+  /rooms/{roomID}/share-reset:
     patch:
       consumes:
       - application/json
@@ -200,12 +200,12 @@ paths:
         type: string
       - description: Account ID
         in: header
-        name: X-Account-Id
+        name: X-Account-ID
         required: true
         type: integer
       - description: Room ID
         in: path
-        name: roomId
+        name: roomID
         required: true
         type: integer
       produces:
@@ -215,7 +215,7 @@ paths:
           description: OK
         "403":
           description: Trying to generate a code for someone else's room; Invalid
-            X-Account-Id header format
+            X-Account-ID header format
           schema:
             $ref: '#/definitions/response.Error'
         "404":

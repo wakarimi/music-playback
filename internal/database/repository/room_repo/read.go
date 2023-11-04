@@ -6,8 +6,8 @@ import (
 	"music-playback/internal/model"
 )
 
-func (r Repository) Read(tx *sqlx.Tx, roomId int) (room model.Room, err error) {
-	log.Debug().Int("roomId", roomId).Msg("Reading room")
+func (r Repository) Read(tx *sqlx.Tx, roomID int) (room model.Room, err error) {
+	log.Debug().Int("roomID", roomID).Msg("Reading room")
 
 	query := `
 		SELECT *
@@ -15,20 +15,20 @@ func (r Repository) Read(tx *sqlx.Tx, roomId int) (room model.Room, err error) {
 		WHERE id = :id
 	`
 	args := map[string]interface{}{
-		"id": roomId,
+		"id": roomID,
 	}
 
 	stmt, err := tx.PrepareNamed(query)
 	if err != nil {
-		log.Error().Int("roomId", roomId).Msg("Failed to prepare query")
+		log.Error().Int("roomID", roomID).Msg("Failed to prepare query")
 		return model.Room{}, err
 	}
 	err = stmt.Get(&room, args)
 	if err != nil {
-		log.Error().Err(err).Int("roomId", roomId).Msg("Failed to read room")
+		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to read room")
 		return model.Room{}, err
 	}
 
-	log.Debug().Int("roomId", roomId).Msg("Room read successfully")
+	log.Debug().Int("roomID", roomID).Msg("Room read successfully")
 	return room, nil
 }

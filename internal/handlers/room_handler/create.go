@@ -23,7 +23,7 @@ type createResponse struct {
 	// ID of the created room
 	ID int `json:"id"`
 	//Room owner
-	OwnerID int `json:"ownerId"`
+	OwnerID int `json:"ownerID"`
 	// Name of the created room
 	Name string `json:"name"`
 	// Playback order in the created room
@@ -36,11 +36,11 @@ type createResponse struct {
 // @Accept json
 // @Produce json
 // @Param Produce-Language 	header 	string 			false 	"Language preference" default(en-US)
-// @Param X-Account-Id 		header 	int 			true 	"Account ID"
+// @Param X-Account-ID 		header 	int 			true 	"Account ID"
 // @Param request			body	createRequest	true	"Room data"
 // @Success 201 {object} createResponse
 // @Failure 400 {object} response.Error "Invalid input data"
-// @Failure 403 {object} response.Error "Invalid X-Account-Id header format"
+// @Failure 403 {object} response.Error "Invalid X-Account-ID header format"
 // @Failure 500 {object} response.Error "Internal server error"
 // @Router /rooms [post]
 func (h *Handler) Create(c *gin.Context) {
@@ -49,10 +49,10 @@ func (h *Handler) Create(c *gin.Context) {
 	lang := c.MustGet("lang").(string)
 	localizer := i18n.NewLocalizer(h.Bundle, lang)
 
-	accountIDHeader := c.GetHeader("X-Account-Id")
+	accountIDHeader := c.GetHeader("X-Account-ID")
 	accountID, err := strconv.Atoi(accountIDHeader)
 	if err != nil {
-		log.Error().Err(err).Str("accountIDHeader", accountIDHeader).Msg("Invalid X-Account-Id format")
+		log.Error().Err(err).Str("accountIDHeader", accountIDHeader).Msg("Invalid X-Account-ID format")
 		c.JSON(http.StatusBadRequest, response.Error{
 			Message: localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "InvalidHeaderFormat"}),
@@ -107,8 +107,8 @@ func (h *Handler) Create(c *gin.Context) {
 
 	log.Debug().Msg("Room created")
 	c.JSON(http.StatusCreated, createResponse{
-		ID:                room.Id,
-		OwnerID:           room.OwnerId,
+		ID:                room.ID,
+		OwnerID:           room.OwnerID,
 		Name:              room.Name,
 		PlaybackOrderType: room.PlaybackOrderType,
 	})
