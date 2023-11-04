@@ -2,7 +2,7 @@ version: "3"
 
 services:
   wakarimi-music-playback:
-    container_name: wakarimi-music-playback
+    container_name: wakarimi-music_playback
     build:
       context: .
     image: wakarimi-music-playback
