@@ -31,5 +31,8 @@
   },
   "FailedToResetShareCode": {
     "other": "Failed to reset share code"
+  },
+  "FailedToRenameRoom": {
+    "other": "Failed to rename room"
   }
 }

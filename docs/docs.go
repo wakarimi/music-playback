@@ -153,6 +153,84 @@ const docTemplate = `{
                 }
             }
         },
+        "/rooms/{roomID}/rename": {
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Renames a room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "roomID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Room data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.renameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.renameResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Trying to rename someone else's room; Failed to encode request; Validation failed for request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Invalid X-Account-ID header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "The room does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/rooms/{roomID}/share-code": {
             "get": {
                 "consumes": [
@@ -202,7 +280,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "The room does not exist",
+                        "description": "The room does not exist; Share code does not exist",
                         "schema": {
                             "$ref": "#/definitions/response.Error"
                         }
@@ -324,7 +402,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "The room does not exist",
+                        "description": "The room does not exist; Share code does not exist",
                         "schema": {
                             "$ref": "#/definitions/response.Error"
                         }
@@ -381,7 +459,11 @@ const docTemplate = `{
         "room_handler.createResponse": {
             "type": "object",
             "properties": {
-                "ID": {
+                "currentQueueItemId": {
+                    "description": "Current queue item ID",
+                    "type": "integer"
+                },
+                "id": {
                     "description": "ID of the created room",
                     "type": "integer"
                 },
@@ -389,7 +471,48 @@ const docTemplate = `{
                     "description": "Name of the created room",
                     "type": "string"
                 },
-                "ownerID": {
+                "ownerId": {
+                    "description": "Room owner",
+                    "type": "integer"
+                },
+                "playbackOrderType": {
+                    "description": "Playback order in the created room",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.PlaybackOrderType"
+                        }
+                    ]
+                }
+            }
+        },
+        "room_handler.renameRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "description": "Desired room name",
+                    "type": "string"
+                }
+            }
+        },
+        "room_handler.renameResponse": {
+            "type": "object",
+            "properties": {
+                "currentQueueItemId": {
+                    "description": "Current queue item ID",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "ID of the created room",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the created room",
+                    "type": "string"
+                },
+                "ownerId": {
                     "description": "Room owner",
                     "type": "integer"
                 },

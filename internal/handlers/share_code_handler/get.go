@@ -30,7 +30,7 @@ type getResponse struct {
 // @Param roomID			path	int		true	"Room ID"
 // @Failure 400 {object} response.Error "Invalid roomID parameter"
 // @Failure 403 {object} response.Error "Trying to get a code for someone else's room; Invalid X-Account-ID header format"
-// @Failure 404 {object} response.Error "The room does not exist"
+// @Failure 404 {object} response.Error "The room does not exist; Share code does not exist"
 // @Failure 500 {object} response.Error "Internal server error"
 // @Router /rooms/{roomID}/share-code [get]
 func (h *Handler) Get(c *gin.Context) {

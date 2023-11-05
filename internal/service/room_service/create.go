@@ -6,7 +6,7 @@ import (
 	"music-playback/internal/model"
 )
 
-func (s Service) Create(tx *sqlx.Tx, roomToCreate model.Room, accountID int) (createdRoom model.Room, err error) {
+func (s Service) Create(tx *sqlx.Tx, roomToCreate model.Room, accountID int) (roomID int, err error) {
 	log.Debug().Str("roomName", roomToCreate.Name).Int("accountID", accountID).Msg("Creating room")
 
 	room := model.Room{
@@ -18,15 +18,9 @@ func (s Service) Create(tx *sqlx.Tx, roomToCreate model.Room, accountID int) (cr
 	createdRoomID, err := s.RoomRepo.Create(tx, room)
 	if err != nil {
 		log.Error().Err(err).Str("roomName", room.Name).Int("account", accountID).Msg("Failed to create room")
-		return model.Room{}, err
+		return 0, err
 	}
 
-	createdRoom, err = s.Get(tx, createdRoomID, accountID)
-	if err != nil {
-		log.Error().Err(err).Int("createdRoomID", createdRoomID).Msg("Failed to read created room")
-		return model.Room{}, err
-	}
-
-	log.Debug().Int("roomID", createdRoom.ID).Str("roomName", createdRoom.Name).Msg("Room created")
-	return createdRoom, nil
+	log.Debug().Int("roomID", createdRoomID).Str("roomToCreate.Name", roomToCreate.Name).Msg("Room created")
+	return createdRoomID, nil
 }

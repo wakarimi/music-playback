@@ -31,5 +31,8 @@
   },
   "FailedToResetShareCode": {
     "other": "Не удалось удалить код подключения"
+  },
+  "FailedToRenameRoom": {
+    "other": "Не удалось переименовать комнату"
   }
 }

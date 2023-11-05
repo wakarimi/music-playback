@@ -29,13 +29,43 @@ definitions:
     type: object
   room_handler.createResponse:
     properties:
-      ID:
+      currentQueueItemId:
+        description: Current queue item ID
+        type: integer
+      id:
         description: ID of the created room
         type: integer
       name:
         description: Name of the created room
         type: string
-      ownerID:
+      ownerId:
+        description: Room owner
+        type: integer
+      playbackOrderType:
+        allOf:
+        - $ref: '#/definitions/model.PlaybackOrderType'
+        description: Playback order in the created room
+    type: object
+  room_handler.renameRequest:
+    properties:
+      name:
+        description: Desired room name
+        type: string
+    required:
+    - name
+    type: object
+  room_handler.renameResponse:
+    properties:
+      currentQueueItemId:
+        description: Current queue item ID
+        type: integer
+      id:
+        description: ID of the created room
+        type: integer
+      name:
+        description: Name of the created room
+        type: string
+      ownerId:
         description: Room owner
         type: integer
       playbackOrderType:
@@ -142,6 +172,59 @@ paths:
       summary: Deletes a room
       tags:
       - Rooms
+  /rooms/{roomID}/rename:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - default: en-US
+        description: Language preference
+        in: header
+        name: Produce-Language
+        type: string
+      - description: Account ID
+        in: header
+        name: X-Account-ID
+        required: true
+        type: integer
+      - description: Room ID
+        in: path
+        name: roomID
+        required: true
+        type: integer
+      - description: Room data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/room_handler.renameRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/room_handler.renameResponse'
+        "400":
+          description: Trying to rename someone else's room; Failed to encode request;
+            Validation failed for request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "403":
+          description: Invalid X-Account-ID header format
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: The room does not exist
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Renames a room
+      tags:
+      - Rooms
   /rooms/{roomID}/share-code:
     delete:
       consumes:
@@ -175,7 +258,7 @@ paths:
           schema:
             $ref: '#/definitions/response.Error'
         "404":
-          description: The room does not exist
+          description: The room does not exist; Share code does not exist
           schema:
             $ref: '#/definitions/response.Error'
         "500":
@@ -217,7 +300,7 @@ paths:
           schema:
             $ref: '#/definitions/response.Error'
         "404":
-          description: The room does not exist
+          description: The room does not exist; Share code does not exist
           schema:
             $ref: '#/definitions/response.Error'
         "500":

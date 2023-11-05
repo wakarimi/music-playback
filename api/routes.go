@@ -53,9 +53,9 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 			rooms.POST("", roomHandler.Create) // Создание комнаты
 			room := rooms.Group("/:roomID")
 			{
-				room.POST("/join")                  // Присоединение к комнате
-				room.PATCH("/rename")               // Переименование комнаты
-				room.DELETE("", roomHandler.Delete) // Удаление комнаты
+				room.POST("/join")                        // Присоединение к комнате
+				room.PATCH("/rename", roomHandler.Rename) // Переименование комнаты
+				room.DELETE("", roomHandler.Delete)       // Удаление комнаты
 
 				playback := room.Group("/playback")
 				{
