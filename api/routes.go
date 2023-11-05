@@ -47,6 +47,7 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 			rooms.PATCH("/:roomID/share", roomHandler.GenerateShareCode)
 			rooms.PATCH("/:roomID/share-reset", roomHandler.ResetShareCode)
 			rooms.GET("/:roomID/share", roomHandler.GetShareCode)
+			rooms.DELETE("/:roomID", roomHandler.Delete)
 		}
 	}
 

@@ -103,6 +103,47 @@ paths:
       summary: Creates a room
       tags:
       - Rooms
+  /rooms/{roomID}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - default: en-US
+        description: Language preference
+        in: header
+        name: Produce-Language
+        type: string
+      - description: Account ID
+        in: header
+        name: X-Account-ID
+        required: true
+        type: integer
+      - description: Room ID
+        in: path
+        name: roomID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: Trying to delete someone else's room; Invalid X-Account-ID
+            header format
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: The room does not exist
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Deletes a room
+      tags:
+      - Rooms
   /rooms/{roomID}/share:
     get:
       consumes:
@@ -145,7 +186,7 @@ paths:
             $ref: '#/definitions/response.Error'
       summary: Receives a code to connect to the room
       tags:
-      - Rooms
+      - ShareCode
     patch:
       consumes:
       - application/json
@@ -187,7 +228,7 @@ paths:
             $ref: '#/definitions/response.Error'
       summary: Creates or recreates a code to connect to a room
       tags:
-      - Rooms
+      - ShareCode
   /rooms/{roomID}/share-reset:
     patch:
       consumes:
@@ -214,8 +255,8 @@ paths:
         "200":
           description: OK
         "403":
-          description: Trying to generate a code for someone else's room; Invalid
-            X-Account-ID header format
+          description: Trying to reset a code for someone else's room; Invalid X-Account-ID
+            header format
           schema:
             $ref: '#/definitions/response.Error'
         "404":
@@ -228,5 +269,5 @@ paths:
             $ref: '#/definitions/response.Error'
       summary: Reset a code to connect to a room
       tags:
-      - Rooms
+      - ShareCode
 swagger: "2.0"

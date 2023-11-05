@@ -19,7 +19,7 @@ type generateShareCodeResponse struct {
 
 // GenerateShareCode creates or recreates a code to connect to a room
 // @Summary Creates or recreates a code to connect to a room
-// @Tags Rooms
+// @Tags ShareCode
 // @Accept 	json
 // @Produce json
 // @Param Produce-Language 	header 	string 	false 	"Language preference" default(en-US)
@@ -42,8 +42,7 @@ func (h *Handler) GenerateShareCode(c *gin.Context) {
 		log.Error().Err(err).Str("accountIDHeader", accountIDHeader).Msg("Invalid X-Account-ID format")
 		c.JSON(http.StatusForbidden, response.Error{
 			Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:    "InvalidHeaderFormat",
-				TemplateData: map[string]interface{}{"Header": "X-Account-ID"}}),
+				MessageID: "InvalidHeaderFormat"}),
 			Reason: err.Error(),
 		})
 		return
@@ -93,7 +92,7 @@ func (h *Handler) GenerateShareCode(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "InternalServerError"}),
+					MessageID: "FailedToGenerateShareCode"}),
 				Reason: err.Error(),
 			})
 			return

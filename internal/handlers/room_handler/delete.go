@@ -11,27 +11,21 @@ import (
 	"strconv"
 )
 
-// generateShareCodeResponse is the data format returned when getting the share code
-type getShareCodeResponse struct {
-	// Code to connect to the room
-	ShareCode *string `json:"shareCode"`
-}
-
-// GetShareCode receives a code to connect to the room
-// @Summary Receives a code to connect to the room
-// @Tags ShareCode
+// Delete room
+// @Summary Deletes a room
+// @Tags Rooms
 // @Accept json
 // @Produce json
 // @Param Produce-Language 	header 	string 	false 	"Language preference" default(en-US)
 // @Param X-Account-ID 		header 	int 	true 	"Account ID"
 // @Param roomID 			path 	int 	true 	"Room ID"
-// @Success 200 {object} generateShareCodeResponse
-// @Failure 403 {object} response.Error "Trying to generate a code for someone else's room; Invalid X-Account-ID header format"
+// @Success 200
+// @Failure 403 {object} response.Error "Trying to delete someone else's room; Invalid X-Account-ID header format"
 // @Failure 404 {object} response.Error "The room does not exist"
 // @Failure 500 {object} response.Error "Internal server error"
-// @Router /rooms/{roomID}/share [get]
-func (h *Handler) GetShareCode(c *gin.Context) {
-	log.Debug().Msg("Getting share code")
+// @Router /rooms/{roomID} [delete]
+func (h *Handler) Delete(c *gin.Context) {
+	log.Debug().Msg("Deleting room")
 
 	lang := c.MustGet("lang").(string)
 	localizer := i18n.NewLocalizer(h.Bundle, lang)
@@ -61,16 +55,15 @@ func (h *Handler) GetShareCode(c *gin.Context) {
 	}
 	log.Debug().Int("roomID", roomID).Msg("Url parameter read successfully")
 
-	var shareCode *string
 	err = h.TransactionManager.WithTransaction(func(tx *sqlx.Tx) (err error) {
-		shareCode, err = h.RoomService.GetShareCode(tx, roomID, accountID)
+		err = h.RoomService.Delete(tx, roomID, accountID)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
 	if err != nil {
-		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to got share code")
+		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to delete room")
 		if _, ok := err.(errors.Forbidden); ok {
 			c.JSON(http.StatusForbidden, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -88,15 +81,13 @@ func (h *Handler) GetShareCode(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "FailedToGetShareCode"}),
+					MessageID: "FailedToDeleteRoom"}),
 				Reason: err.Error(),
 			})
 			return
 		}
 	}
 
-	log.Debug().Msg("Share code got")
-	c.JSON(http.StatusOK, generateShareCodeResponse{
-		ShareCode: shareCode,
-	})
+	log.Debug().Msg("Room deleted")
+	c.Status(http.StatusOK)
 }

@@ -5,9 +5,6 @@
   "InvalidUrlParameterFormat": {
     "other": "Invalid request parameter format"
   },
-  "InternalServerError": {
-    "other": "Internal server error"
-  },
   "FailedToEncodeRequest": {
     "other": "Failed to encode request"
   },
@@ -22,5 +19,17 @@
   },
   "RoomNotFound": {
     "other": "Room not found"
+  },
+  "FailedToDeleteRoom": {
+    "other": "Failed to delete room"
+  },
+  "FailedToGenerateShareCode": {
+    "other": "Failed to generate share code"
+  },
+  "FailedToGetShareCode": {
+    "other": "Failed to get share code"
+  },
+  "FailedToResetShareCode": {
+    "other": "Failed to reset share code"
   }
 }

@@ -13,14 +13,14 @@ import (
 
 // ResetShareCode reset a code to connect to a room
 // @Summary Reset a code to connect to a room
-// @Tags Rooms
+// @Tags ShareCode
 // @Accept 	json
 // @Produce json
 // @Param Produce-Language 	header 	string 	false 	"Language preference" default(en-US)
 // @Param X-Account-ID 		header 	int 	true 	"Account ID"
 // @Param roomID 			path 	int 	true 	"Room ID"
 // @Success 200
-// @Failure 403 {object} response.Error "Trying to generate a code for someone else's room; Invalid X-Account-ID header format"
+// @Failure 403 {object} response.Error "Trying to reset a code for someone else's room; Invalid X-Account-ID header format"
 // @Failure 404 {object} response.Error "The room does not exist"
 // @Failure 500 {object} response.Error "Internal server error"
 // @Router /rooms/{roomID}/share-reset [patch]
@@ -36,8 +36,7 @@ func (h *Handler) ResetShareCode(c *gin.Context) {
 		log.Error().Err(err).Str("accountIDHeader", accountIDHeader).Msg("Invalid X-Account-ID format")
 		c.JSON(http.StatusForbidden, response.Error{
 			Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:    "InvalidHeaderFormat",
-				TemplateData: map[string]interface{}{"Header": "X-Account-ID"}}),
+				MessageID: "InvalidHeaderFormat"}),
 			Reason: err.Error(),
 		})
 		return
@@ -82,7 +81,7 @@ func (h *Handler) ResetShareCode(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "InternalServerError"}),
+					MessageID: "FailedToResetShareCode"}),
 				Reason: err.Error(),
 			})
 			return

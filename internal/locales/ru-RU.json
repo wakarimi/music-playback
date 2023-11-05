@@ -1,12 +1,9 @@
 {
   "InvalidHeaderFormat": {
-    "other": "Неверный формат заголовка"
+    "other": "Неверный формат запроса"
   },
   "InvalidUrlParameterFormat": {
     "other": "Неверный формат параметра запроса"
-  },
-  "InternalServerError": {
-    "other": "Втунренняя ошибка сервера"
   },
   "FailedToEncodeRequest": {
     "other": "Не удалось распознать запрос"
@@ -22,5 +19,17 @@
   },
   "RoomNotFound": {
     "other": "Комната не найдена"
+  },
+  "FailedToDeleteRoom": {
+    "other": "Не удалось удалить комнату"
+  },
+  "FailedToGenerateShareCode": {
+    "other": "Не удалось сгенерировать код подключения"
+  },
+  "FailedToGetShareCode": {
+    "other": "Не удалось запросить код подключения"
+  },
+  "FailedToResetShareCode": {
+    "other": "Не удалось удалить код подключения"
   }
 }

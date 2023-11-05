@@ -99,7 +99,8 @@ func (h *Handler) Create(c *gin.Context) {
 		log.Error().Err(err).Msg("Failed to create room")
 		c.JSON(http.StatusInternalServerError, response.Error{
 			Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "FailedToCreateRoom"}),
+				MessageID:    "FailedToCreateRoom",
+				TemplateData: map[string]interface{}{"RoomName": request.Name}}),
 			Reason: err.Error(),
 		})
 		return

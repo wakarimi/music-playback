@@ -12,6 +12,7 @@ type Repo interface {
 	IsExists(tx *sqlx.Tx, roomID int) (exists bool, err error)
 	IsShareCodeUsed(tx *sqlx.Tx, shareCode string) (used bool, err error)
 	ResetShareCode(tx *sqlx.Tx, roomID int) (err error)
+	Delete(tx *sqlx.Tx, roomID int) (err error)
 }
 
 type Repository struct {
