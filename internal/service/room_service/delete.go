@@ -8,24 +8,14 @@ import (
 )
 
 func (s Service) Delete(tx *sqlx.Tx, roomID int, accountID int) (err error) {
-	log.Debug().Int("roomID", roomID).Msg("Getting share code")
+	log.Debug().Int("roomID", roomID).Msg("Deleting room")
 
-	roomExists, err := s.RoomRepo.IsExists(tx, roomID)
+	room, err := s.Get(tx, roomID, accountID)
 	if err != nil {
-		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to check room existence")
-		return err
-	}
-	if !roomExists {
-		err = errors.NotFound{Resource: fmt.Sprintf("room with id=%d", roomID)}
-		log.Error().Err(err).Int("roomID", roomID).Msg("Room not found")
+		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to get room")
 		return err
 	}
 
-	room, err := s.RoomRepo.Read(tx, roomID)
-	if err != nil {
-		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to read room")
-		return err
-	}
 	if room.OwnerID != accountID {
 		err = errors.Forbidden{Message: fmt.Sprintf("room %d is not owned by account %d", roomID, accountID)}
 		log.Error().Err(err).Int("roomID", roomID).Int("accountID", accountID).Msg("Room is not owned by account")

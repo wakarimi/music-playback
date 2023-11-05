@@ -20,6 +20,7 @@ import (
 // @Param X-Account-ID 		header 	int 	true 	"Account ID"
 // @Param roomID 			path 	int 	true 	"Room ID"
 // @Success 200
+// @Failure 400 {object} response.Error "Invalid roomID parameter"
 // @Failure 403 {object} response.Error "Trying to delete someone else's room; Invalid X-Account-ID header format"
 // @Failure 404 {object} response.Error "The room does not exist"
 // @Failure 500 {object} response.Error "Internal server error"
@@ -74,7 +75,7 @@ func (h *Handler) Delete(c *gin.Context) {
 		} else if _, ok := err.(errors.NotFound); ok {
 			c.JSON(http.StatusNotFound, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "RoomNotFound"}),
+					MessageID: "NotFound"}),
 				Reason: err.Error(),
 			})
 			return

@@ -10,10 +10,13 @@ import (
 	"golang.org/x/text/language"
 	"music-playback/internal/context"
 	"music-playback/internal/database/repository/room_repo"
+	"music-playback/internal/database/repository/share_code_repo"
 	"music-playback/internal/handlers/room_handler"
+	"music-playback/internal/handlers/share_code_handler"
 	"music-playback/internal/middleware"
 	"music-playback/internal/service"
 	"music-playback/internal/service/room_service"
+	"music-playback/internal/service/share_code_service"
 )
 
 func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
@@ -30,12 +33,15 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 	bundle.LoadMessageFile("internal/locales/ru-RU.json")
 
 	roomRepo := room_repo.NewRepository()
+	shareCodeRepo := share_code_repo.NewRepository()
 
 	txManager := service.NewTransactionManager(*ac.Db)
 
 	roomService := room_service.NewService(roomRepo)
+	shareCodeService := share_code_service.NewService(shareCodeRepo, *roomService)
 
 	roomHandler := room_handler.NewHandler(*roomService, txManager, bundle)
+	shareCodeHandler := share_code_handler.NewHandler(*shareCodeService, txManager, bundle)
 
 	api := r.Group("/api")
 	{
@@ -43,11 +49,50 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 
 		rooms := api.Group("/rooms")
 		{
-			rooms.POST("", roomHandler.Create)
-			rooms.PATCH("/:roomID/share", roomHandler.GenerateShareCode)
-			rooms.PATCH("/:roomID/share-reset", roomHandler.ResetShareCode)
-			rooms.GET("/:roomID/share", roomHandler.GetShareCode)
-			rooms.DELETE("/:roomID", roomHandler.Delete)
+			rooms.GET("")                      // Получение комнат, в которых состоит пользователь
+			rooms.POST("", roomHandler.Create) // Создание комнаты
+			room := rooms.Group("/:roomID")
+			{
+				room.POST("/join")                  // Присоединение к комнате
+				room.PATCH("/rename")               // Переименование комнаты
+				room.DELETE("", roomHandler.Delete) // Удаление комнаты
+
+				playback := room.Group("/playback")
+				{
+					playback.GET("")        // Информация о текущем воспроизведении
+					playback.POST("/play")  // Отпаузить
+					playback.POST("/pause") // Пауза
+					playback.POST("/next")  // Переход к следующему треку
+					playback.POST("/jump")  // Перейти к конкретному треку в очереди
+					playback.POST("/order") // Изменение порядка воспроизведения
+
+				}
+				queue := room.Group("/queue")
+				{
+					queue.GET("")       // Получение текущей очереди комнаты
+					queue.POST("")      // Добавление трека в очередь
+					queue.POST("/move") // Переместить трек в очереди
+					queue.DELETE("")    // Очищение очереди
+					queueItem := queue.Group("/:queueItemID")
+					{
+						queueItem.DELETE("") // Удаление трека из очереди
+					}
+				}
+				roommates := room.Group("/roommates")
+				{
+					room.GET("") // Получение всех членов комнаты
+					roommate := roommates.Group("/:roommateID")
+					{
+						roommate.DELETE("") // Удаление члена группы/Выход из группы
+					}
+				}
+				shareCode := room.Group("/share-code")
+				{
+					shareCode.GET("", shareCodeHandler.Get)       // Запрос кода комнаты
+					shareCode.POST("", shareCodeHandler.Create)   // Генерация/Перегенерация кода
+					shareCode.DELETE("", shareCodeHandler.Delete) // Запрет входа в комнату
+				}
+			}
 		}
 	}
 

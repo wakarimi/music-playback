@@ -1,22 +1,22 @@
-package room_repo
+package share_code_repo
 
 import (
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
 )
 
-func (r Repository) IsShareCodeUsed(tx *sqlx.Tx, shareCode string) (used bool, err error) {
+func (r Repository) IsCodeUsed(tx *sqlx.Tx, code string) (used bool, err error) {
 	log.Debug().Msg("Checking share code usage")
 
 	query := `
 		SELECT EXISTS (
 			SELECT 1 
-			FROM rooms
-			WHERE share_code = :share_code
+			FROM share_codes
+			WHERE code = :code
 		)
 	`
 	args := map[string]interface{}{
-		"share_code": shareCode,
+		"code": code,
 	}
 
 	stmt, err := tx.PrepareNamed(query)

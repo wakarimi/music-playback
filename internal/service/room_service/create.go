@@ -6,22 +6,22 @@ import (
 	"music-playback/internal/model"
 )
 
-func (s Service) Create(tx *sqlx.Tx, roomToCreate model.Room, ownerID int) (createdRoom model.Room, err error) {
-	log.Debug().Str("roomName", roomToCreate.Name).Int("ownerID", ownerID).Msg("Creating room")
+func (s Service) Create(tx *sqlx.Tx, roomToCreate model.Room, accountID int) (createdRoom model.Room, err error) {
+	log.Debug().Str("roomName", roomToCreate.Name).Int("accountID", accountID).Msg("Creating room")
 
-	preparedRoom := model.Room{
+	room := model.Room{
 		Name:              roomToCreate.Name,
-		OwnerID:           ownerID,
-		PlaybackOrderType: "IN_ORDER",
+		OwnerID:           accountID,
+		PlaybackOrderType: model.PlaybackInOrder,
 	}
 
-	createdRoomID, err := s.RoomRepo.Create(tx, preparedRoom)
+	createdRoomID, err := s.RoomRepo.Create(tx, room)
 	if err != nil {
-		log.Error().Err(err).Str("roomName", preparedRoom.Name).Int("owner", ownerID).Msg("Failed to create room")
+		log.Error().Err(err).Str("roomName", room.Name).Int("account", accountID).Msg("Failed to create room")
 		return model.Room{}, err
 	}
 
-	createdRoom, err = s.RoomRepo.Read(tx, createdRoomID)
+	createdRoom, err = s.Get(tx, createdRoomID, accountID)
 	if err != nil {
 		log.Error().Err(err).Int("createdRoomID", createdRoomID).Msg("Failed to read created room")
 		return model.Room{}, err

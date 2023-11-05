@@ -1,22 +1,23 @@
-package room_repo
+package share_code_repo
 
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
+	"music-playback/internal/model"
 )
 
-func (r Repository) UpdateShareCode(tx *sqlx.Tx, roomID int, shareCode string) (err error) {
+func (r Repository) UpdateByRoom(tx *sqlx.Tx, shareCode model.ShareCode, roomID int) (err error) {
 	log.Debug().Int("roomID", roomID).Msg("Updating share code")
 
 	query := `
-		UPDATE rooms
-		SET share_code = :share_code
-		WHERE id = :id
+		UPDATE share_codes
+		SET code = :code
+		WHERE room_id = :room_id
 	`
 	args := map[string]interface{}{
-		"id":         roomID,
-		"share_code": shareCode,
+		"code":    shareCode.Code,
+		"room_id": roomID,
 	}
 
 	result, err := tx.NamedExec(query, args)

@@ -1,4 +1,4 @@
-package room_handler
+package share_code_handler
 
 import (
 	"github.com/gin-gonic/gin"
@@ -7,25 +7,34 @@ import (
 	"github.com/rs/zerolog/log"
 	"music-playback/internal/errors"
 	"music-playback/internal/handlers/response"
+	"music-playback/internal/model"
 	"net/http"
 	"strconv"
 )
 
-// ResetShareCode reset a code to connect to a room
-// @Summary Reset a code to connect to a room
+// getResponse is the data format returned when getting the share code
+type getResponse struct {
+	// Room ID for code
+	RoomID int `json:"roomID"`
+	// Code to connect to the room
+	Code string `json:"code"`
+}
+
+// Get gets share code
+// @Summary Gets share code
 // @Tags ShareCode
 // @Accept 	json
 // @Produce json
-// @Param Produce-Language 	header 	string 	false 	"Language preference" default(en-US)
-// @Param X-Account-ID 		header 	int 	true 	"Account ID"
-// @Param roomID 			path 	int 	true 	"Room ID"
-// @Success 200
-// @Failure 403 {object} response.Error "Trying to reset a code for someone else's room; Invalid X-Account-ID header format"
+// @Param Produce-Language	header	string	false	"Language preference" default(en-US)
+// @Param X-Account-ID		header	int		true	"Account ID"
+// @Param roomID			path	int		true	"Room ID"
+// @Failure 400 {object} response.Error "Invalid roomID parameter"
+// @Failure 403 {object} response.Error "Trying to get a code for someone else's room; Invalid X-Account-ID header format"
 // @Failure 404 {object} response.Error "The room does not exist"
 // @Failure 500 {object} response.Error "Internal server error"
-// @Router /rooms/{roomID}/share-reset [patch]
-func (h *Handler) ResetShareCode(c *gin.Context) {
-	log.Debug().Msg("Resetting share code")
+// @Router /rooms/{roomID}/share-code [get]
+func (h *Handler) Get(c *gin.Context) {
+	log.Debug().Msg("Getting share code")
 
 	lang := c.MustGet("lang").(string)
 	localizer := i18n.NewLocalizer(h.Bundle, lang)
@@ -55,15 +64,16 @@ func (h *Handler) ResetShareCode(c *gin.Context) {
 	}
 	log.Debug().Int("roomID", roomID).Msg("Url parameter read successfully")
 
+	var shareCode model.ShareCode
 	err = h.TransactionManager.WithTransaction(func(tx *sqlx.Tx) (err error) {
-		err = h.RoomService.ResetShareCode(tx, roomID, accountID)
+		shareCode, err = h.ShareCodeService.Get(tx, roomID, accountID)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
 	if err != nil {
-		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to reset share code")
+		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to get share code")
 		if _, ok := err.(errors.Forbidden); ok {
 			c.JSON(http.StatusForbidden, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -74,20 +84,23 @@ func (h *Handler) ResetShareCode(c *gin.Context) {
 		} else if _, ok := err.(errors.NotFound); ok {
 			c.JSON(http.StatusNotFound, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "RoomNotFound"}),
+					MessageID: "NotFound"}),
 				Reason: err.Error(),
 			})
 			return
 		} else {
 			c.JSON(http.StatusInternalServerError, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "FailedToResetShareCode"}),
+					MessageID: "FailedToGetShareCode"}),
 				Reason: err.Error(),
 			})
 			return
 		}
 	}
 
-	log.Debug().Msg("Share code reset")
-	c.Status(http.StatusOK)
+	log.Debug().Msg("Share code got")
+	c.JSON(http.StatusOK, createResponse{
+		RoomID: shareCode.RoomID,
+		Code:   shareCode.Code,
+	})
 }

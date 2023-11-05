@@ -3,7 +3,7 @@ package model
 type PlaybackOrderType string
 
 const (
-	InOrder PlaybackOrderType = "IN_ORDER"
-	Replay  PlaybackOrderType = "REPLAY"
-	Random  PlaybackOrderType = "RANDOM"
+	PlaybackInOrder PlaybackOrderType = "IN_ORDER"
+	PlaybackReplay  PlaybackOrderType = "REPLAY"
+	PlaybackRandom  PlaybackOrderType = "RANDOM"
 )

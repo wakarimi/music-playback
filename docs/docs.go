@@ -67,7 +67,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid input data",
+                        "description": "Failed to encode request; Validation failed for request",
                         "schema": {
                             "$ref": "#/definitions/response.Error"
                         }
@@ -126,6 +126,12 @@ const docTemplate = `{
                     "200": {
                         "description": "OK"
                     },
+                    "400": {
+                        "description": "Invalid roomID parameter",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
                     "403": {
                         "description": "Trying to delete someone else's room; Invalid X-Account-ID header format",
                         "schema": {
@@ -147,7 +153,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/rooms/{roomID}/share": {
+        "/rooms/{roomID}/share-code": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -158,7 +164,7 @@ const docTemplate = `{
                 "tags": [
                     "ShareCode"
                 ],
-                "summary": "Receives a code to connect to the room",
+                "summary": "Gets share code",
                 "parameters": [
                     {
                         "type": "string",
@@ -183,10 +189,71 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "400": {
+                        "description": "Invalid roomID parameter",
                         "schema": {
-                            "$ref": "#/definitions/room_handler.generateShareCodeResponse"
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Trying to get a code for someone else's room; Invalid X-Account-ID header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "The room does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShareCode"
+                ],
+                "summary": "Creates and sets or replaces share code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "roomID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid roomID parameter",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
                         }
                     },
                     "403": {
@@ -209,7 +276,7 @@ const docTemplate = `{
                     }
                 }
             },
-            "patch": {
+            "delete": {
                 "consumes": [
                     "application/json"
                 ],
@@ -219,7 +286,7 @@ const docTemplate = `{
                 "tags": [
                     "ShareCode"
                 ],
-                "summary": "Creates or recreates a code to connect to a room",
+                "summary": "Deletes share code",
                 "parameters": [
                     {
                         "type": "string",
@@ -244,74 +311,14 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "400": {
+                        "description": "Invalid roomID parameter",
                         "schema": {
-                            "$ref": "#/definitions/room_handler.generateShareCodeResponse"
+                            "$ref": "#/definitions/response.Error"
                         }
                     },
                     "403": {
-                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-ID header format",
-                        "schema": {
-                            "$ref": "#/definitions/response.Error"
-                        }
-                    },
-                    "404": {
-                        "description": "The room does not exist",
-                        "schema": {
-                            "$ref": "#/definitions/response.Error"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/rooms/{roomID}/share-reset": {
-            "patch": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ShareCode"
-                ],
-                "summary": "Reset a code to connect to a room",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "en-US",
-                        "description": "Language preference",
-                        "name": "Produce-Language",
-                        "in": "header"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Account ID",
-                        "name": "X-Account-ID",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Room ID",
-                        "name": "roomID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "403": {
-                        "description": "Trying to reset a code for someone else's room; Invalid X-Account-ID header format",
+                        "description": "Trying to delete a code for someone else's room; Invalid X-Account-ID header format",
                         "schema": {
                             "$ref": "#/definitions/response.Error"
                         }
@@ -341,9 +348,9 @@ const docTemplate = `{
                 "RANDOM"
             ],
             "x-enum-varnames": [
-                "InOrder",
-                "Replay",
-                "Random"
+                "PlaybackInOrder",
+                "PlaybackReplay",
+                "PlaybackRandom"
             ]
         },
         "response.Error": {
@@ -374,7 +381,7 @@ const docTemplate = `{
         "room_handler.createResponse": {
             "type": "object",
             "properties": {
-                "id": {
+                "ID": {
                     "description": "ID of the created room",
                     "type": "integer"
                 },
@@ -393,15 +400,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.PlaybackOrderType"
                         }
                     ]
-                }
-            }
-        },
-        "room_handler.generateShareCodeResponse": {
-            "type": "object",
-            "properties": {
-                "shareCode": {
-                    "description": "Code to connect to the room",
-                    "type": "string"
                 }
             }
         }

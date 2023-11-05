@@ -21,8 +21,8 @@ type createRequest struct {
 // createResponse represents the response format for a room creation request
 type createResponse struct {
 	// ID of the created room
-	ID int `json:"id"`
-	//Room owner
+	ID int `json:"ID"`
+	// Room owner
 	OwnerID int `json:"ownerID"`
 	// Name of the created room
 	Name string `json:"name"`
@@ -39,7 +39,7 @@ type createResponse struct {
 // @Param X-Account-ID 		header 	int 			true 	"Account ID"
 // @Param request			body	createRequest	true	"Room data"
 // @Success 201 {object} createResponse
-// @Failure 400 {object} response.Error "Invalid input data"
+// @Failure 400 {object} response.Error "Failed to encode request; Validation failed for request"
 // @Failure 403 {object} response.Error "Invalid X-Account-ID header format"
 // @Failure 500 {object} response.Error "Internal server error"
 // @Router /rooms [post]
@@ -53,7 +53,7 @@ func (h *Handler) Create(c *gin.Context) {
 	accountID, err := strconv.Atoi(accountIDHeader)
 	if err != nil {
 		log.Error().Err(err).Str("accountIDHeader", accountIDHeader).Msg("Invalid X-Account-ID format")
-		c.JSON(http.StatusBadRequest, response.Error{
+		c.JSON(http.StatusForbidden, response.Error{
 			Message: localizer.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "InvalidHeaderFormat"}),
 			Reason: err.Error(),

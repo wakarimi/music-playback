@@ -17,8 +17,8 @@
   "NotEnoughRightsToTheRoom": {
     "other": "Недостаточно прав к комнате"
   },
-  "RoomNotFound": {
-    "other": "Комната не найдена"
+  "NotFound": {
+    "other": "Запрашиваемый элемент не найден"
   },
   "FailedToDeleteRoom": {
     "other": "Не удалось удалить комнату"
