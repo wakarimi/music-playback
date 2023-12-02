@@ -11,8 +11,8 @@ import (
 	"music-playback/internal/context"
 	"music-playback/internal/database/repository/room_repo"
 	"music-playback/internal/database/repository/share_code_repo"
-	"music-playback/internal/handlers/room_handler"
-	"music-playback/internal/handlers/share_code_handler"
+	"music-playback/internal/handler/room_handler"
+	"music-playback/internal/handler/share_code_handler"
 	"music-playback/internal/middleware"
 	"music-playback/internal/service"
 	"music-playback/internal/service/room_service"
@@ -29,8 +29,8 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", json.Unmarshal)
-	bundle.LoadMessageFile("internal/locales/en-US.json")
-	bundle.LoadMessageFile("internal/locales/ru-RU.json")
+	bundle.LoadMessageFile("internal/locale/en-US.json")
+	bundle.LoadMessageFile("internal/locale/ru-RU.json")
 
 	roomRepo := room_repo.NewRepository()
 	shareCodeRepo := share_code_repo.NewRepository()

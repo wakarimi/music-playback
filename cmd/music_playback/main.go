@@ -78,8 +78,8 @@ func closeDatabase(db *sqlx.DB) {
 }
 
 func initializeMigrations(db *sqlx.DB) {
-	if err := database.RunMigrations(db, "./internal/database/migrations"); err != nil {
-		log.Panic().Err(err).Msg("Failed to apply migrations")
+	if err := database.RunMigrations(db, "./internal/database/migration"); err != nil {
+		log.Panic().Err(err).Msg("Failed to apply migration")
 	}
 	log.Debug().Msg("Data schema actualized")
 }

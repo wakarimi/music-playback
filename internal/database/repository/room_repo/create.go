@@ -33,8 +33,8 @@ func (r Repository) Create(tx *sqlx.Tx, room model.Room) (roomID int, err error)
 			return 0, err
 		}
 	} else {
-		err := fmt.Errorf("no id returned after album insert")
-		log.Error().Err(err).Msg("No id returned after album insert")
+		err := fmt.Errorf("no id returned after room insert")
+		log.Error().Err(err).Msg("No id returned after room insert")
 		return 0, err
 	}
 

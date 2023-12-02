@@ -26,7 +26,7 @@ func (r Repository) UpdateName(tx *sqlx.Tx, roomID int, name string) (err error)
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to get rows affected after share code update")
+		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to get rows affected after room update")
 		return err
 	}
 	if rowsAffected == 0 {

@@ -1,4 +1,4 @@
-package share_code_handler
+package room_handler
 
 import (
 	"github.com/gin-gonic/gin"
@@ -6,35 +6,27 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/rs/zerolog/log"
 	"music-playback/internal/errors"
-	"music-playback/internal/handlers/response"
-	"music-playback/internal/model"
+	"music-playback/internal/handler/response"
 	"net/http"
 	"strconv"
 )
 
-// getResponse is the data format returned when getting the share code
-type getResponse struct {
-	// Room ID for code
-	RoomID int `json:"roomID"`
-	// Code to connect to the room
-	Code string `json:"code"`
-}
-
-// Get gets share code
-// @Summary Gets share code
-// @Tags ShareCode
-// @Accept 	json
+// Delete room
+// @Summary Deletes a room
+// @Tags Rooms
+// @Accept json
 // @Produce json
-// @Param Produce-Language	header	string	false	"Language preference" default(en-US)
-// @Param X-Account-ID		header	int		true	"Account ID"
-// @Param roomID			path	int		true	"Room ID"
+// @Param Produce-Language 	header 	string 	false 	"Language preference" default(en-US)
+// @Param X-Account-ID 		header 	int 	true 	"Account ID"
+// @Param roomID 			path 	int 	true 	"Room ID"
+// @Success 200
 // @Failure 400 {object} response.Error "Invalid roomID parameter"
-// @Failure 403 {object} response.Error "Trying to get a code for someone else's room; Invalid X-Account-ID header format"
-// @Failure 404 {object} response.Error "The room does not exist; Share code does not exist"
+// @Failure 403 {object} response.Error "Trying to delete someone else's room; Invalid X-Account-ID header format"
+// @Failure 404 {object} response.Error "The room does not exist"
 // @Failure 500 {object} response.Error "Internal server error"
-// @Router /rooms/{roomID}/share-code [get]
-func (h *Handler) Get(c *gin.Context) {
-	log.Debug().Msg("Getting share code")
+// @Router /rooms/{roomID} [delete]
+func (h *Handler) Delete(c *gin.Context) {
+	log.Debug().Msg("Deleting room")
 
 	lang := c.MustGet("lang").(string)
 	localizer := i18n.NewLocalizer(h.Bundle, lang)
@@ -64,16 +56,15 @@ func (h *Handler) Get(c *gin.Context) {
 	}
 	log.Debug().Int("roomID", roomID).Msg("Url parameter read successfully")
 
-	var shareCode model.ShareCode
 	err = h.TransactionManager.WithTransaction(func(tx *sqlx.Tx) (err error) {
-		shareCode, err = h.ShareCodeService.Get(tx, roomID, accountID)
+		err = h.RoomService.Delete(tx, roomID, accountID)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
 	if err != nil {
-		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to get share code")
+		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to delete room")
 		if _, ok := err.(errors.Forbidden); ok {
 			c.JSON(http.StatusForbidden, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -91,16 +82,13 @@ func (h *Handler) Get(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "FailedToGetShareCode"}),
+					MessageID: "FailedToDeleteRoom"}),
 				Reason: err.Error(),
 			})
 			return
 		}
 	}
 
-	log.Debug().Msg("Share code got")
-	c.JSON(http.StatusOK, createResponse{
-		RoomID: shareCode.RoomID,
-		Code:   shareCode.Code,
-	})
+	log.Debug().Msg("Room deleted")
+	c.Status(http.StatusOK)
 }

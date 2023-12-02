@@ -6,22 +6,22 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/rs/zerolog/log"
 	"music-playback/internal/errors"
-	"music-playback/internal/handlers/response"
+	"music-playback/internal/handler/response"
 	"music-playback/internal/model"
 	"net/http"
 	"strconv"
 )
 
-// createResponse is the data format returned when generating the share code
-type createResponse struct {
+// getResponse is the data format returned when getting the share code
+type getResponse struct {
 	// Room ID for code
 	RoomID int `json:"roomID"`
 	// Code to connect to the room
 	Code string `json:"code"`
 }
 
-// Create creates and sets or replaces share code
-// @Summary Creates and sets or replaces share code
+// Get gets share code
+// @Summary Gets share code
 // @Tags ShareCode
 // @Accept 	json
 // @Produce json
@@ -29,12 +29,12 @@ type createResponse struct {
 // @Param X-Account-ID		header	int		true	"Account ID"
 // @Param roomID			path	int		true	"Room ID"
 // @Failure 400 {object} response.Error "Invalid roomID parameter"
-// @Failure 403 {object} response.Error "Trying to generate a code for someone else's room; Invalid X-Account-ID header format"
-// @Failure 404 {object} response.Error "The room does not exist"
+// @Failure 403 {object} response.Error "Trying to get a code for someone else's room; Invalid X-Account-ID header format"
+// @Failure 404 {object} response.Error "The room does not exist; Share code does not exist"
 // @Failure 500 {object} response.Error "Internal server error"
-// @Router /rooms/{roomID}/share-code [post]
-func (h *Handler) Create(c *gin.Context) {
-	log.Debug().Msg("Creating share code")
+// @Router /rooms/{roomID}/share-code [get]
+func (h *Handler) Get(c *gin.Context) {
+	log.Debug().Msg("Getting share code")
 
 	lang := c.MustGet("lang").(string)
 	localizer := i18n.NewLocalizer(h.Bundle, lang)
@@ -66,10 +66,6 @@ func (h *Handler) Create(c *gin.Context) {
 
 	var shareCode model.ShareCode
 	err = h.TransactionManager.WithTransaction(func(tx *sqlx.Tx) (err error) {
-		err = h.ShareCodeService.CreateOrUpdate(tx, roomID, accountID)
-		if err != nil {
-			return err
-		}
 		shareCode, err = h.ShareCodeService.Get(tx, roomID, accountID)
 		if err != nil {
 			return err
@@ -77,7 +73,7 @@ func (h *Handler) Create(c *gin.Context) {
 		return nil
 	})
 	if err != nil {
-		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to create share code")
+		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to get share code")
 		if _, ok := err.(errors.Forbidden); ok {
 			c.JSON(http.StatusForbidden, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -95,14 +91,14 @@ func (h *Handler) Create(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, response.Error{
 				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "FailedToGenerateShareCode"}),
+					MessageID: "FailedToGetShareCode"}),
 				Reason: err.Error(),
 			})
 			return
 		}
 	}
 
-	log.Debug().Msg("Share code generated")
+	log.Debug().Msg("Share code got")
 	c.JSON(http.StatusOK, createResponse{
 		RoomID: shareCode.RoomID,
 		Code:   shareCode.Code,

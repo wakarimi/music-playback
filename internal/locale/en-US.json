@@ -17,8 +17,8 @@
   "NotEnoughRightsToTheRoom": {
     "other": "Not enough rights to the room"
   },
-  "RoomNotFound": {
-    "other": "Room not found"
+  "NotFound": {
+    "other": "Element not found"
   },
   "FailedToDeleteRoom": {
     "other": "Failed to delete room"
