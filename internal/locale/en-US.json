@@ -34,5 +34,8 @@
   },
   "FailedToRenameRoom": {
     "other": "Failed to rename room"
+  },
+  "FailedToGetAccountRooms": {
+    "other": "Failed to get account rooms"
   }
 }

@@ -34,5 +34,9 @@
   },
   "FailedToRenameRoom": {
     "other": "Не удалось переименовать комнату"
+  },
+  "FailedToGetAccountRooms": {
+    "other": "Не удалось получить комнаты аккаунта"
   }
 }
+

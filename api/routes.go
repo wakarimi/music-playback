@@ -2,12 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/rs/zerolog/log"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
-	"golang.org/x/text/language"
 	"music-playback/internal/context"
 	"music-playback/internal/database/repository/room_repo"
 	"music-playback/internal/database/repository/share_code_repo"
@@ -17,6 +11,13 @@ import (
 	"music-playback/internal/service"
 	"music-playback/internal/service/room_service"
 	"music-playback/internal/service/share_code_service"
+
+	"github.com/gin-gonic/gin"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/rs/zerolog/log"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"golang.org/x/text/language"
 )
 
 func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
@@ -49,8 +50,8 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 
 		rooms := api.Group("/rooms")
 		{
-			rooms.GET("")                      // Получение комнат, в которых состоит пользователь
-			rooms.POST("", roomHandler.Create) // Создание комнаты
+			rooms.GET("/my", roomHandler.GetMy) // Получение комнат, в которых состоит пользователь
+			rooms.POST("", roomHandler.Create)  // Создание комнаты
 			room := rooms.Group("/:roomID")
 			{
 				room.POST("/join")                        // Присоединение к комнате

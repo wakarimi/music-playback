@@ -8,6 +8,7 @@ import (
 type Repo interface {
 	Create(tx *sqlx.Tx, room model.Room) (roomID int, err error)
 	Read(tx *sqlx.Tx, roomID int) (room model.Room, err error)
+	ReadAllByAccount(tx *sqlx.Tx, accountID int) (rooms []model.Room, err error)
 	UpdateName(tx *sqlx.Tx, roomID int, name string) (err error)
 	Delete(tx *sqlx.Tx, roomID int) (err error)
 	IsExists(tx *sqlx.Tx, roomID int) (exists bool, err error)
