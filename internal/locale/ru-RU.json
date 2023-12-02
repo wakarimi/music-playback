@@ -1,0 +1,38 @@
+{
+  "InvalidHeaderFormat": {
+    "other": "Неверный формат запроса"
+  },
+  "InvalidUrlParameterFormat": {
+    "other": "Неверный формат параметра запроса"
+  },
+  "FailedToEncodeRequest": {
+    "other": "Не удалось распознать запрос"
+  },
+  "FailedToCreateRoom": {
+    "other": "Не удалось создать комнату {{.RoomName}}"
+  },
+  "ValidationFailedForRequest": {
+    "other": "Неверные параметры запроса"
+  },
+  "NotEnoughRightsToTheRoom": {
+    "other": "Недостаточно прав к комнате"
+  },
+  "NotFound": {
+    "other": "Запрашиваемый элемент не найден"
+  },
+  "FailedToDeleteRoom": {
+    "other": "Не удалось удалить комнату"
+  },
+  "FailedToGenerateShareCode": {
+    "other": "Не удалось сгенерировать код подключения"
+  },
+  "FailedToGetShareCode": {
+    "other": "Не удалось запросить код подключения"
+  },
+  "FailedToResetShareCode": {
+    "other": "Не удалось удалить код подключения"
+  },
+  "FailedToRenameRoom": {
+    "other": "Не удалось переименовать комнату"
+  }
+}

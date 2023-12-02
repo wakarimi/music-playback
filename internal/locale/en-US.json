@@ -1,0 +1,38 @@
+{
+  "InvalidHeaderFormat": {
+    "other": "Invalid header format"
+  },
+  "InvalidUrlParameterFormat": {
+    "other": "Invalid request parameter format"
+  },
+  "FailedToEncodeRequest": {
+    "other": "Failed to encode request"
+  },
+  "FailedToCreateRoom": {
+    "other": "Failed to create room {{.RoomName}}"
+  },
+  "ValidationFailedForRequest": {
+    "other": "Validation failed for request"
+  },
+  "NotEnoughRightsToTheRoom": {
+    "other": "Not enough rights to the room"
+  },
+  "NotFound": {
+    "other": "Element not found"
+  },
+  "FailedToDeleteRoom": {
+    "other": "Failed to delete room"
+  },
+  "FailedToGenerateShareCode": {
+    "other": "Failed to generate share code"
+  },
+  "FailedToGetShareCode": {
+    "other": "Failed to get share code"
+  },
+  "FailedToResetShareCode": {
+    "other": "Failed to reset share code"
+  },
+  "FailedToRenameRoom": {
+    "other": "Failed to rename room"
+  }
+}

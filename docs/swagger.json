@@ -1,0 +1,523 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Wakarimi Music Playback API",
+        "contact": {
+            "name": "Dmitry Kolesnikov (Zalimannard)",
+            "email": "zalimannard@mail.ru"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "0.4.2"
+    },
+    "host": "localhost:8024",
+    "basePath": "/api",
+    "paths": {
+        "/rooms": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Creates a room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Room data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.createRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.createResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to encode request; Validation failed for request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Invalid X-Account-ID header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/rooms/{roomID}": {
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Deletes a room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "roomID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid roomID parameter",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Trying to delete someone else's room; Invalid X-Account-ID header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "The room does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/rooms/{roomID}/rename": {
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rooms"
+                ],
+                "summary": "Renames a room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "roomID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Room data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.renameRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/room_handler.renameResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Trying to rename someone else's room; Failed to encode request; Validation failed for request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Invalid X-Account-ID header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "The room does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/rooms/{roomID}/share-code": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShareCode"
+                ],
+                "summary": "Gets share code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "roomID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid roomID parameter",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Trying to get a code for someone else's room; Invalid X-Account-ID header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "The room does not exist; Share code does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShareCode"
+                ],
+                "summary": "Creates and sets or replaces share code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "roomID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid roomID parameter",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Trying to generate a code for someone else's room; Invalid X-Account-ID header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "The room does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShareCode"
+                ],
+                "summary": "Deletes share code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language preference",
+                        "name": "Produce-Language",
+                        "in": "header"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "X-Account-ID",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Room ID",
+                        "name": "roomID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid roomID parameter",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Trying to delete a code for someone else's room; Invalid X-Account-ID header format",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "404": {
+                        "description": "The room does not exist; Share code does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.PlaybackOrderType": {
+            "type": "string",
+            "enum": [
+                "IN_ORDER",
+                "REPLAY",
+                "RANDOM"
+            ],
+            "x-enum-varnames": [
+                "PlaybackInOrder",
+                "PlaybackReplay",
+                "PlaybackRandom"
+            ]
+        },
+        "response.Error": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "Human-readable error message",
+                    "type": "string"
+                },
+                "reason": {
+                    "description": "Internal error description",
+                    "type": "string"
+                }
+            }
+        },
+        "room_handler.createRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "description": "Desired room name",
+                    "type": "string"
+                }
+            }
+        },
+        "room_handler.createResponse": {
+            "type": "object",
+            "properties": {
+                "currentQueueItemId": {
+                    "description": "Current queue item ID",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "ID of the created room",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the created room",
+                    "type": "string"
+                },
+                "ownerId": {
+                    "description": "Room owner",
+                    "type": "integer"
+                },
+                "playbackOrderType": {
+                    "description": "Playback order in the created room",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.PlaybackOrderType"
+                        }
+                    ]
+                }
+            }
+        },
+        "room_handler.renameRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "description": "Desired room name",
+                    "type": "string"
+                }
+            }
+        },
+        "room_handler.renameResponse": {
+            "type": "object",
+            "properties": {
+                "currentQueueItemId": {
+                    "description": "Current queue item ID",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "ID of the created room",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the created room",
+                    "type": "string"
+                },
+                "ownerId": {
+                    "description": "Room owner",
+                    "type": "integer"
+                },
+                "playbackOrderType": {
+                    "description": "Playback order in the created room",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.PlaybackOrderType"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
