@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"music-playback/internal/context"
 	"music-playback/internal/database/repository/room_repo"
+	"music-playback/internal/database/repository/roommate_repo"
 	"music-playback/internal/database/repository/share_code_repo"
 	"music-playback/internal/handler/room_handler"
 	"music-playback/internal/handler/share_code_handler"
 	"music-playback/internal/middleware"
 	"music-playback/internal/service"
 	"music-playback/internal/service/room_service"
+	"music-playback/internal/service/roommate_service"
 	"music-playback/internal/service/share_code_service"
 
 	"github.com/gin-gonic/gin"
@@ -33,12 +35,14 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 	bundle.LoadMessageFile("internal/locale/en-US.json")
 	bundle.LoadMessageFile("internal/locale/ru-RU.json")
 
+	roommateRepo := roommate_repo.NewRepository()
 	roomRepo := room_repo.NewRepository()
 	shareCodeRepo := share_code_repo.NewRepository()
 
 	txManager := service.NewTransactionManager(*ac.Db)
 
-	roomService := room_service.NewService(roomRepo)
+	roommateService := roommate_service.NewService(roommateRepo)
+	roomService := room_service.NewService(roomRepo, *roommateService)
 	shareCodeService := share_code_service.NewService(shareCodeRepo, *roomService)
 
 	roomHandler := room_handler.NewHandler(*roomService, txManager, bundle)

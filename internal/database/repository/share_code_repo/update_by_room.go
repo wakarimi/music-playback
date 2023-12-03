@@ -23,6 +23,7 @@ func (r Repository) UpdateByRoom(tx *sqlx.Tx, shareCode model.ShareCode, roomID 
 	result, err := tx.NamedExec(query, args)
 	if err != nil {
 		log.Error().Err(err).Int("roomID", roomID).Msg("Failed to update share code")
+		return err
 	}
 
 	rowsAffected, err := result.RowsAffected()
