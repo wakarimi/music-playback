@@ -11,14 +11,6 @@ import (
 	"strconv"
 )
 
-// deleteResponse is the data format returned when deleting the share code
-type deleteResponse struct {
-	// Room ID for code
-	RoomID int `json:"roomID"`
-	// Code to connect to the room
-	Code string `json:"code"`
-}
-
 // Delete deletes share code
 // @Summary Deletes share code
 // @Tags ShareCode
@@ -96,6 +88,6 @@ func (h *Handler) Delete(c *gin.Context) {
 		}
 	}
 
-	log.Debug().Msg("Share code generated")
+	log.Debug().Msg("Share code deleted")
 	c.Status(http.StatusOK)
 }

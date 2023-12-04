@@ -15,7 +15,7 @@ import (
 // getResponse is the data format returned when getting the share code
 type getResponse struct {
 	// Room ID for code
-	RoomID int `json:"roomID"`
+	RoomID int `json:"roomId"`
 	// Code to connect to the room
 	Code string `json:"code"`
 }
