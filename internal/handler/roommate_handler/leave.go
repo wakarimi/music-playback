@@ -1,4 +1,4 @@
-package room_handler
+package roommate_handler
 
 import (
 	"github.com/gin-gonic/gin"
@@ -11,8 +11,8 @@ import (
 	"strconv"
 )
 
-// Delete room
-// @Summary Deletes a room
+// Leave from the room
+// @Summary Leave from the room
 // @Tags Rooms
 // @Accept json
 // @Produce json
@@ -25,7 +25,7 @@ import (
 // @Failure 404 {object} response.Error "The room does not exist"
 // @Failure 500 {object} response.Error "Internal server error"
 // @Router /rooms/{roomID} [delete]
-func (h *Handler) Delete(c *gin.Context) {
+func (h *Handler) Leave(c *gin.Context) {
 	log.Debug().Msg("Deleting room")
 
 	lang := c.MustGet("lang").(string)
@@ -57,7 +57,7 @@ func (h *Handler) Delete(c *gin.Context) {
 	log.Debug().Int("roomID", roomID).Msg("Url parameter read successfully")
 
 	err = h.TransactionManager.WithTransaction(func(tx *sqlx.Tx) (err error) {
-		err = h.RoomService.Delete(tx, roomID, accountID)
+		_, err = h.RoommateService.Leave(tx, roomID, accountID)
 		if err != nil {
 			return err
 		}

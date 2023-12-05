@@ -28,7 +28,13 @@ func (s Service) Get(tx *sqlx.Tx, roomID int, accountID int) (room model.Room, e
 		return model.Room{}, err
 	}
 
-	if room.OwnerID != accountID {
+	isRoommate, err := s.RoomRepo.IsRoommate(tx, roomID, accountID)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to check roommate")
+		return model.Room{}, err
+	}
+
+	if !isRoommate {
 		err = errors.Forbidden{Message: fmt.Sprintf("account %d does not have enough rights to room %d", accountID, roomID)}
 		log.Error().Err(err).Int("accountID", accountID).Int("roomID", roomID).Msg("The account does not have enough permissions for the room")
 		return model.Room{}, err

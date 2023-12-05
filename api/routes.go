@@ -47,7 +47,7 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 	shareCodeService := share_code_service.NewService(shareCodeRepo, *roomService)
 
 	roomHandler := room_handler.NewHandler(*roomService, *roommateService, txManager, bundle)
-	roommateHandler := roommate_handler.NewHandler(*roommateService, txManager, bundle)
+	roommateHandler := roommate_handler.NewHandler(*roomService, *roommateService, txManager, bundle)
 	shareCodeHandler := share_code_handler.NewHandler(*shareCodeService, txManager, bundle)
 
 	api := r.Group("/api")
@@ -62,8 +62,8 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 
 			room := rooms.Group("/:roomID")
 			{
-				room.PATCH("/rename", roomHandler.Rename) // Переименование комнаты
-				room.DELETE("", roomHandler.Delete)       // Удаление комнаты
+				room.PATCH("/rename", roomHandler.Rename)    // Переименование комнаты
+				room.DELETE("/leave", roommateHandler.Leave) // Удаление комнаты
 
 				playback := room.Group("/playback")
 				{

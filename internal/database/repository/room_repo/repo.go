@@ -14,6 +14,7 @@ type Repo interface {
 	IsExists(tx *sqlx.Tx, roomID int) (exists bool, err error)
 	ReadByShareCode(tx *sqlx.Tx, shareCode string) (room model.Room, err error)
 	IsExistsByShareCode(tx *sqlx.Tx, shareCode string) (exists bool, err error)
+	IsRoommate(tx *sqlx.Tx, roomID int, accountID int) (isRoommate bool, err error)
 }
 
 type Repository struct {
