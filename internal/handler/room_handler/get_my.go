@@ -32,8 +32,8 @@ type getMyResponse struct {
 	Rooms []getMyResponseItem `json:"rooms"`
 }
 
-// Get account's rooms
-// @Summary Get account's rooms
+// GetMy account's rooms
+// @Summary GetMy account's rooms
 // @Tags Rooms
 // @Accept json
 // @Produce json

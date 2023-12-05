@@ -7,6 +7,7 @@ import (
 	"music-playback/internal/database/repository/roommate_repo"
 	"music-playback/internal/database/repository/share_code_repo"
 	"music-playback/internal/handler/room_handler"
+	"music-playback/internal/handler/roommate_handler"
 	"music-playback/internal/handler/share_code_handler"
 	"music-playback/internal/middleware"
 	"music-playback/internal/service"
@@ -41,11 +42,12 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 
 	txManager := service.NewTransactionManager(*ac.Db)
 
-	roommateService := roommate_service.NewService(roommateRepo)
-	roomService := room_service.NewService(roomRepo, *roommateService)
+	roomService := room_service.NewService(roomRepo)
+	roommateService := roommate_service.NewService(roommateRepo, *roomService)
 	shareCodeService := share_code_service.NewService(shareCodeRepo, *roomService)
 
-	roomHandler := room_handler.NewHandler(*roomService, txManager, bundle)
+	roomHandler := room_handler.NewHandler(*roomService, *roommateService, txManager, bundle)
+	roommateHandler := roommate_handler.NewHandler(*roommateService, txManager, bundle)
 	shareCodeHandler := share_code_handler.NewHandler(*shareCodeService, txManager, bundle)
 
 	api := r.Group("/api")
@@ -54,11 +56,12 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 
 		rooms := api.Group("/rooms")
 		{
-			rooms.GET("/my", roomHandler.GetMy) // Получение комнат, в которых состоит пользователь
-			rooms.POST("", roomHandler.Create)  // Создание комнаты
+			rooms.GET("/my", roomHandler.GetMy)       // Получение комнат, в которых состоит пользователь
+			rooms.POST("", roomHandler.Create)        // Создание комнаты
+			rooms.POST("/join", roommateHandler.Join) // Присоединение к комнате
+
 			room := rooms.Group("/:roomID")
 			{
-				room.POST("/join")                        // Присоединение к комнате
 				room.PATCH("/rename", roomHandler.Rename) // Переименование комнаты
 				room.DELETE("", roomHandler.Delete)       // Удаление комнаты
 
@@ -78,6 +81,7 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 					queue.POST("")      // Добавление трека в очередь
 					queue.POST("/move") // Переместить трек в очереди
 					queue.DELETE("")    // Очищение очереди
+
 					queueItem := queue.Group("/:queueItemID")
 					{
 						queueItem.DELETE("") // Удаление трека из очереди
@@ -86,6 +90,7 @@ func SetupRouter(ac *context.AppContext) (r *gin.Engine) {
 				roommates := room.Group("/roommates")
 				{
 					room.GET("") // Получение всех членов комнаты
+
 					roommate := roommates.Group("/:roommateID")
 					{
 						roommate.DELETE("") // Удаление члена группы/Выход из группы

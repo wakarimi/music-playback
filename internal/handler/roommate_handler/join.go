@@ -1,4 +1,4 @@
-package room_handler
+package roommate_handler
 
 import (
 	"github.com/gin-gonic/gin"
@@ -6,47 +6,34 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"github.com/rs/zerolog/log"
+	"music-playback/internal/errors"
 	"music-playback/internal/handler/response"
-	"music-playback/internal/model"
 	"net/http"
 	"strconv"
 )
 
-// createRequest represents the request format for creating a room
-type createRequest struct {
+// joinRequest represents the request format for joining to the room
+type joinRequest struct {
 	// Desired room name
-	Name string `json:"name" validate:"required"`
+	ShareCode string `json:"shareCode" validate:"required"`
 }
 
-// createResponse represents the response format for a room creation request
-type createResponse struct {
-	// ID of the created room
-	ID int `json:"id"`
-	// Room owner
-	OwnerID int `json:"ownerId"`
-	// Current queue item ID
-	CurrentQueueItemID *int `json:"currentQueueItemId"`
-	// Name of the created room
-	Name string `json:"name"`
-	// Playback order in the created room
-	PlaybackOrderType model.PlaybackOrderType `json:"playbackOrderType"`
-}
-
-// Create a room
-// @Summary Creates a room
-// @Tags Rooms
+// Join to the room
+// @Summary Join to the room
+// @Tags Roommates
 // @Accept json
 // @Produce json
 // @Param Produce-Language 	header 	string 			false 	"Language preference" default(en-US)
 // @Param X-Account-ID 		header 	int 			true 	"Account ID"
-// @Param request			body	createRequest	true	"Room data"
-// @Success 201 {object} createResponse
+// @Param request			body	joinRequest 	true	"ShareCode"
+// @Success 201
 // @Failure 400 {object} response.Error "Failed to encode request; Validation failed for request"
 // @Failure 403 {object} response.Error "Invalid X-Account-ID header format"
+// @Failure 404 {object} response.Error "Share code not found"
 // @Failure 500 {object} response.Error "Internal server error"
 // @Router /rooms [post]
-func (h *Handler) Create(c *gin.Context) {
-	log.Debug().Msg("Creating a room")
+func (h *Handler) Join(c *gin.Context) {
+	log.Debug().Msg("Joining to the room")
 
 	lang := c.MustGet("lang").(string)
 	localizer := i18n.NewLocalizer(h.Bundle, lang)
@@ -63,7 +50,7 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	var request createRequest
+	var request joinRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		log.Error().Err(err).Msg("Failed to encode request")
 		c.JSON(http.StatusBadRequest, response.Error{
@@ -73,7 +60,7 @@ func (h *Handler) Create(c *gin.Context) {
 		})
 		return
 	}
-	log.Debug().Str("roomName", request.Name).Msg("Request encoded successfully")
+	log.Debug().Msg("Request encoded successfully")
 
 	validate := validator.New()
 	if err := validate.Struct(request); err != nil {
@@ -86,41 +73,32 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	var room model.Room
 	err = h.TransactionManager.WithTransaction(func(tx *sqlx.Tx) (err error) {
-		roomToCreate := model.Room{
-			Name: request.Name,
-		}
-		roomID, err := h.RoomService.Create(tx, roomToCreate, accountID)
-		if err != nil {
-			return err
-		}
-		_, err = h.RoommateService.Join(tx, roomID, accountID)
-		if err != nil {
-			return err
-		}
-		room, err = h.RoomService.Get(tx, roomID, accountID)
+		_, err = h.RoommateService.JoinByShareCode(tx, accountID, request.ShareCode)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to create room")
-		c.JSON(http.StatusInternalServerError, response.Error{
-			Message: localizer.MustLocalize(&i18n.LocalizeConfig{
-				MessageID:    "FailedToCreateRoom",
-				TemplateData: map[string]interface{}{"RoomName": request.Name}}),
-			Reason: err.Error(),
-		})
-		return
+		log.Error().Err(err).Msg("Failed to join to the room room")
+		if _, ok := err.(errors.NotFound); ok {
+			c.JSON(http.StatusNotFound, response.Error{
+				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
+					MessageID: "NotFound"}),
+				Reason: err.Error(),
+			})
+			return
+		} else {
+			c.JSON(http.StatusInternalServerError, response.Error{
+				Message: localizer.MustLocalize(&i18n.LocalizeConfig{
+					MessageID: "FailedToJoinToTheRoom"}),
+				Reason: err.Error(),
+			})
+			return
+		}
 	}
 
-	log.Debug().Msg("Room created")
-	c.JSON(http.StatusCreated, createResponse{
-		ID:                room.ID,
-		OwnerID:           room.OwnerID,
-		Name:              room.Name,
-		PlaybackOrderType: room.PlaybackOrderType,
-	})
+	log.Debug().Msg("Rommate created")
+	c.Status(http.StatusCreated)
 }

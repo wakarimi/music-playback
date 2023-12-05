@@ -6,7 +6,7 @@ import (
 	"music-playback/internal/model"
 )
 
-func (s Service) Create(tx *sqlx.Tx, roomID int, accountID int) (roommateID int, err error) {
+func (s Service) Join(tx *sqlx.Tx, roomID int, accountID int) (roommateID int, err error) {
 	log.Debug().Int("roomId", roomID).Int("accountId", accountID).Msg("Creating roommate")
 
 	roommate := model.Roommate{

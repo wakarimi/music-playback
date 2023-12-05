@@ -37,5 +37,8 @@
   },
   "FailedToGetAccountRooms": {
     "other": "Failed to get account rooms"
+  },
+  "FailedToJoinToTheRoom": {
+    "other": "Failed to join to the room"
   }
 }

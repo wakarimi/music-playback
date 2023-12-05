@@ -37,6 +37,9 @@
   },
   "FailedToGetAccountRooms": {
     "other": "Не удалось получить комнаты аккаунта"
+  },
+  "FailedToJoinToTheRoom": {
+    "other": "Не удалось присоединиться к комнате"
   }
 }
 

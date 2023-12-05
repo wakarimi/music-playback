@@ -21,12 +21,6 @@ func (s Service) Create(tx *sqlx.Tx, roomToCreate model.Room, accountID int) (ro
 		return 0, err
 	}
 
-	_, err = s.RoommateService.Create(tx, createdRoomID, accountID)
-	if err != nil {
-		log.Error().Err(err).Int("roomId", createdRoomID).Int("accountId", accountID).Msg("Failed to create owner's roommate")
-		return 0, err
-	}
-
 	log.Debug().Int("roomID", createdRoomID).Str("roomToCreate.Name", roomToCreate.Name).Msg("Room created")
 	return createdRoomID, nil
 }
