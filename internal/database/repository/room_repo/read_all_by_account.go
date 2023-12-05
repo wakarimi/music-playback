@@ -14,6 +14,7 @@ func (r Repository) ReadAllByAccount(tx *sqlx.Tx, accountID int) ([]model.Room, 
 		FROM rooms r
 		INNER JOIN roommates rm ON r.id = rm.room_id
 		WHERE rm.account_id = :account_id
+		ORDER BY r.id
 	`
 	args := map[string]interface{}{
 		"account_id": accountID,
